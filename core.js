@@ -112,9 +112,9 @@ function flash(element, className) {
 
 // --- questions ---
 
-// A fact source is { tables, factors } or { facts: 'squares' | 'tricky' }.
+// A fact source is { tables, factors }, { facts: 'squares', max } or { facts: 'tricky' }.
 function factsFor(source) {
-  if (source.facts === 'squares') return range(1, 10).map(n => [n, n]);
+  if (source.facts === 'squares') return range(1, source.max ?? 10).map(n => [n, n]);
   if (source.facts === 'tricky') return range(6, 9).flatMap(a => range(6, 9).map(b => [a, b]));
   const factors = source.factors ?? range(1, 10);
   return source.tables.flatMap(table => factors.map(factor => [table, factor]));
@@ -159,10 +159,11 @@ function wrongExpressions(question, count) {
   const { a, b, answer } = question;
   const candidates = [[a, b + 1], [a, b - 1], [a + 1, b], [a - 1, b], [a + 1, b + 1], [a - 1, b - 1],
     [a, b + 2], [a + 2, b], [a, b - 2], [a - 2, b]];
+  const maxFactor = settings.include1112 ? 12 : 10;
   const seen = new Set([answer]);
   const picked = [];
   for (const [x, y] of shuffle(candidates)) {
-    if (x < 1 || y < 1 || seen.has(x * y) || picked.length >= count) continue;
+    if (x < 1 || y < 1 || x > maxFactor || y > maxFactor || seen.has(x * y) || picked.length >= count) continue;
     seen.add(x * y);
     picked.push(Math.random() < 0.5 ? [x, y] : [y, x]);
   }

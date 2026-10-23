@@ -17,13 +17,20 @@ This file is the complete specification of the game. It is written so that it ca
 
 ## Languages
 
-- English and Norwegian (bokmål), switched with EN/NO buttons in the header at any time, also mid-game. The first visit picks Norwegian when the browser language is `nb`, `nn` or `no`, otherwise English. The choice is remembered.
+- English and Norwegian (bokmål), switched on the Settings screen. The first visit picks Norwegian when the browser language is `nb`, `nn` or `no`, otherwise English. The choice is remembered.
 - The multiplication sign is `×` in English and `·` (a raised dot) in Norwegian, everywhere an expression is shown. Because of that, `·` must not be used as a separator in any game text (use `–`).
 - Decimal separator for times: `.` in English, `,` in Norwegian (`12.3 s` / `12,3 s`).
 
 ## Menu
 
-Two tabs, remembered between visits: **Levels** (default) and **Free play**.
+Two tabs, remembered between visits: **Levels** (default) and **Free play**. A ⚙ button in the header (hidden while playing) opens Settings.
+
+## Settings
+
+A screen with a Back button and:
+
+- **Language:** English / Norsk buttons.
+- **Include the 11 and 12 tables** (checkbox, off by default), with a short explanation: when on, the 11 and 12 tables and the factors 11 and 12 are part of the levels and free play, and the levels with and without them keep separate medals. When off, 11 and 12 never appear anywhere in the game.
 
 ## Levels
 
@@ -37,7 +44,7 @@ A course in the style of typingclub.com: levels are played in order, each one is
 
 ### Level intro
 
-Tapping a tile opens an intro screen: unit name, "Level N: <gameplay>", a short how-to for the gameplay, what is practised ("The 2 table", "Square numbers, 1 × 1 to 10 × 10", "6, 7, 8 and 9 times 6, 7, 8 and 9", "…, factors up to 12"), the number of questions / rounds / duration and any time limit per question, the goal for each medal, the player's best medal, and a Start button.
+Tapping a tile opens an intro screen: unit name, "Level N: <gameplay>", a short how-to for the gameplay, what is practised ("The 2 table", "Square numbers, 1 × 1 to 10 × 10", "6, 7, 8 and 9 times 6, 7, 8 and 9"), the number of questions / rounds / duration and any time limit per question, the goal for each medal, the player's best medal, and a Start button.
 
 ### Medals
 
@@ -57,7 +64,7 @@ Shows the unit and level title, the medal earned (large circle plus "Gold!" / "S
 
 ### Questions
 
-- A level practises a set of facts: given tables times the factors 1–10 (1–12 in the 11-and-12 unit), the square numbers 1×1 to 10×10, or the "tricky" facts 6–9 × 6–9.
+- A level practises a set of facts: given tables times the factors 1–10 (1–12 with 11 and 12), the square numbers 1×1 to 10×10 (to 12×12 with 11 and 12), or the "tricky" facts 6–9 × 6–9.
 - Facts are drawn like from a shuffled deck: every fact once before any repeats, never the same answer twice in a row, and the two factors are shown in random order.
 - Plausible wrong answers come from neighbouring facts (a×(b±1), (a±1)×b), off-by-one, ±10, swapped digits and a+b.
 
@@ -94,29 +101,35 @@ Match levels use seconds per pair [bronze, silver, gold] and mistakes allowed: i
 
 The order follows a common teaching order (2, 10, 5, 1, square numbers, 4, 3, 9, then 6, 8, 7 and the hardest facts last). Each table is introduced with an easy gameplay and lots of time before it has to be typed. "T" = tables; balloon levels list duration, the seconds a balloon takes to rise through the field, and the points for [bronze, silver, gold].
 
-1. **The 2 table:** 1 choice T2 intro; 2 true/false T2 intro (12 questions); 3 type T2 intro; 4 match T2 intro (2 rounds)
-2. **The 10 and 5 tables:** 5 choice T10 intro; 6 type T10 intro; 7 choice T5 intro; 8 type T5 intro; 9 balloons T2, 5, 10 (45 s, rise 9 s, [5, 10, 15])
-3. **The 1 table and a review:** 10 true/false T1, 10 intro (12 questions); 11 find the question T2, 5, 10 practice; 12 type T1, 2, 5, 10 review
-4. **Square numbers:** 13 choice intro; 14 match intro; 15 type practice
-5. **The 4 table: double the 2s:** 16 choice T4 intro; 17 type T4 intro; 18 missing T2, 4 practice; 19 balloons T2, 4, 5, 10 (45 s, rise 8 s, [6, 12, 18])
-6. **The 3 table:** 20 choice T3 intro; 21 true/false T3 intro (12); 22 type T3 intro; 23 match T3, 4 practice
-7. **The 9 table: 10 times minus once:** 24 choice T9 intro; 25 find the question T9 practice; 26 type T9 intro; 27 missing T3, 9 practice
-8. **Review: 1–5, 9 and 10:** 28 type review (20 questions, 6 s limit); 29 balloons (60 s, rise 7 s, [8, 15, 22]); 30 in a row 10 (6 s limit; [60, 35, 20] s total)
-9. **The 6 table: double the 3s:** 31 choice T6 intro; 32 type T6 intro; 33 match T3, 6 practice
-10. **The 8 table: double the 4s:** 34 choice T8 intro; 35 true/false T4, 8 practice; 36 type T8 intro
-11. **The 7 table:** 37 choice T7 intro; 38 type T7 intro; 39 find the question T6, 7, 8 practice; 40 missing T6, 7, 8 practice
-12. **The tricky ones: 6–9 times 6–9:** 41 match practice; 42 choice review (5 s limit); 43 type review (5 s limit); 44 balloons (60 s, rise 6 s, [8, 16, 24])
-13. **Mastery: 1–10:** 45 true/false master (3 s limit); 46 choice master (4 s limit); 47 missing master (6 s limit); 48 match master (4 rounds); 49 balloons (60 s, rise 5 s, [10, 18, 26]); 50 type master; 51 in a row 20 (4 s limit; [80, 50, 30] s total); 52 type final
-14. **Bonus: 11 and 12:** 53 choice T11 intro; 54 type T11 practice; 55 choice T12 intro; 56 type T12 practice; 57 balloons T1–12 (60 s, rise 5 s, [10, 18, 26]); 58 type T1–12 final, but gold at ≤ 1.2 s per answer
+There are two courses, depending on the 11-and-12 setting (see Settings), and levels are numbered consecutively within the course:
+
+- **Without 11 and 12** (52 levels): every table goes up to 10 times, and the units marked "with 11 and 12 only" are left out. The 11 and 12 tables never appear anywhere, also not as wrong options.
+- **With 11 and 12** (59 levels): every table goes up to 12 times, the square numbers go up to 12 × 12, and the 11 and 12 tables are introduced along the way: 11 right after the 9s (its pattern is easy), 12 right after the 6s (double the 6s). The review and mastery units include them. The two courses keep separate medals.
+
+1. **The 2 table:** choice T2 intro; true/false T2 intro (12 questions); type T2 intro; match T2 intro (2 rounds)
+2. **The 10 and 5 tables:** choice T10 intro; type T10 intro; choice T5 intro; type T5 intro; balloons T2, 5, 10 (45 s, rise 9 s, [5, 10, 15])
+3. **The 1 table and a review:** true/false T1, 10 intro (12 questions); find the question T2, 5, 10 practice; type T1, 2, 5, 10 review
+4. **Square numbers:** choice intro; match intro; type practice
+5. **The 4 table: double the 2s:** choice T4 intro; type T4 intro; missing T2, 4 practice; balloons T2, 4, 5, 10 (45 s, rise 8 s, [6, 12, 18])
+6. **The 3 table:** choice T3 intro; true/false T3 intro (12); type T3 intro; match T3, 4 practice
+7. **The 9 table: 10 times minus once:** choice T9 intro; find the question T9 practice; type T9 intro; missing T3, 9 practice
+8. **The 11 table: the digit doubles** (with 11 and 12 only): choice T11 intro; true/false T11 intro (12); type T11 intro; match T10, 11 practice
+9. **Review: 1–5, 9 and 10** (plus 11 when included): type review (20 questions, 6 s limit); balloons (60 s, rise 7 s, [8, 15, 22]); in a row 10 (6 s limit; [60, 35, 20] s total)
+10. **The 6 table: double the 3s:** choice T6 intro; type T6 intro; match T3, 6 practice
+11. **The 12 table: double the 6s** (with 11 and 12 only): choice T12 intro; type T12 intro; missing T6, 12 practice
+12. **The 8 table: double the 4s:** choice T8 intro; true/false T4, 8 practice; type T8 intro
+13. **The 7 table:** choice T7 intro; type T7 intro; find the question T6, 7, 8 practice; missing T6, 7, 8 practice
+14. **The tricky ones: 6–9 times 6–9:** match practice; choice review (5 s limit); type review (5 s limit); balloons (60 s, rise 6 s, [8, 16, 24])
+15. **Mastery: 1–10** (1–12 with 11 and 12): true/false master (3 s limit); choice master (4 s limit); missing master (6 s limit); match master (4 rounds); balloons (60 s, rise 5 s, [10, 18, 26]); type master; in a row 20 (4 s limit; [80, 50, 30] s total); type final (with 11 and 12, gold needs ≤ 1.2 s per answer instead of 1.1 s)
 
 ## Free play
 
 ### Tables
 
 - Default: all multiplication tables from 1 to 10.
-- An "Include 11 and 12" checkbox adds the 11 and 12 tables (selected when the box is ticked, removed when it is cleared).
-- The player can customise the game by toggling specific tables (chips 1–10, plus 11 and 12 when included). At least one table must be selected; otherwise a warning is shown and the game modes are disabled.
-- Questions are drawn as described under Questions, with factors 1–10, or 1–12 when 11 and 12 are included.
+- With the 11-and-12 setting on, the 11 and 12 tables are added (selected when the setting is turned on).
+- The player can customise the game by toggling specific tables (chips 1–10, plus 11 and 12 when the setting is on). At least one table must be selected; otherwise a warning is shown and the game modes are disabled.
+- Questions are drawn as described under Questions, with factors 1–10, or 1–12 when the 11-and-12 setting is on.
 
 ### Game modes
 

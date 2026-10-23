@@ -9,10 +9,7 @@
 <body>
   <header>
     <h1 data-i18n="title"></h1>
-    <div class="lang" role="group" aria-label="Language">
-      <button data-lang="en">EN</button>
-      <button data-lang="no">NO</button>
-    </div>
+    <button id="open-settings" class="icon-button" aria-label="Settings">⚙</button>
   </header>
 
   <main>
@@ -30,15 +27,27 @@
       <div id="tab-free" hidden>
         <h2 data-i18n="tables"></h2>
         <div id="table-chips" class="chips"></div>
-        <label class="check">
-          <input type="checkbox" id="include-11-12">
-          <span data-i18n="include1112"></span>
-        </label>
         <p id="table-warning" class="warning" data-i18n="selectOne" hidden></p>
 
         <h2 data-i18n="mode"></h2>
         <div id="modes" class="modes"></div>
       </div>
+    </section>
+
+    <section id="settings" class="screen" hidden>
+      <button id="close-settings" class="link" data-i18n="back"></button>
+      <h2 data-i18n="settings"></h2>
+      <h3 data-i18n="language"></h3>
+      <div class="lang" role="group">
+        <button data-lang="en">English</button>
+        <button data-lang="no">Norsk</button>
+      </div>
+      <h3 data-i18n="tables"></h3>
+      <label class="check">
+        <input type="checkbox" id="include-11-12">
+        <span data-i18n="include1112"></span>
+      </label>
+      <p class="small" data-i18n="include1112Help"></p>
     </section>
 
     <section id="intro" class="screen" hidden></section>

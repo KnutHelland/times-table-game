@@ -69,8 +69,8 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 button.big { width: 100%; padding: 14px; font-size: 1.1rem; margin-top: 16px; }
 button.link { border: none; background: none; padding: 4px 0; color: var(--muted); }
 
-.lang { display: flex; gap: 4px; }
-.lang button { padding: 4px 10px; font-size: 0.85rem; }
+.lang { display: flex; gap: 6px; }
+.icon-button { font-size: 1.2rem; line-height: 1; padding: 6px 10px; }
 
 .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 

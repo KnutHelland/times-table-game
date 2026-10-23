@@ -21,7 +21,8 @@ let runner = null;
 let renderScreen = null; // redraws the visible screen, e.g. after a language switch
 
 function show(screen, render) {
-  for (const id of ['menu', 'intro', 'play', 'result']) $(id).hidden = id !== screen;
+  for (const id of ['menu', 'settings', 'intro', 'play', 'result']) $(id).hidden = id !== screen;
+  $('open-settings').hidden = screen === 'play' || screen === 'settings';
   renderScreen = render;
   render?.();
   window.scrollTo(0, 0);
@@ -103,7 +104,6 @@ function renderFreePlay() {
     });
     chips.append(chip);
   }
-  $('include-11-12').checked = settings.include1112;
   $('table-warning').hidden = selectedTables().length > 0;
 
   const modes = $('modes');
@@ -122,10 +122,9 @@ function renderFreePlay() {
 // --- level intro ---
 
 function factsText(source) {
-  if (source.facts === 'squares') return t('factsSquares');
+  if (source.facts === 'squares') return t('factsSquares', source.max);
   if (source.facts === 'tricky') return t('factsTricky');
-  const upTo12 = source.factors?.length === 12 && source.tables.some(n => n <= 10) ? `, ${t('upTo12')}` : '';
-  return t('factsTables', source.tables) + upTo12;
+  return t('factsTables', source.tables);
 }
 
 function detailsText(level) {
@@ -379,10 +378,16 @@ $('include-11-12').addEventListener('change', e => {
   const without = settings.tables.filter(n => n <= 10);
   settings.tables = settings.include1112 ? [...without, 11, 12] : without;
   save(SETTINGS_KEY, settings);
-  renderFreePlay();
+  buildCourse(settings.include1112);
 });
+
+$('open-settings').addEventListener('click', () => show('settings', () => {
+  $('include-11-12').checked = settings.include1112;
+}));
+$('close-settings').addEventListener('click', toMenu);
 
 $('quit').addEventListener('click', toMenu);
 
+buildCourse(settings.include1112);
 renderStatic();
 toMenu();
