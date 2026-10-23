@@ -5,7 +5,7 @@ This file is the complete specification of the game. It is written so that it ca
 ## Platform
 
 - A single web page made of plain HTML, CSS and JavaScript (classic `<script>` tags, no modules, no build step, no dependencies), so it works when `index.html` is opened directly from disk.
-- Works with mouse, touch and keyboard, on phone and desktop (content column max 460 px). Light and dark color scheme follow the system.
+- Works with mouse, touch and keyboard, on phone and desktop (content column max 460 px). Mobile requirements: no horizontal scrolling at 320 px width (also not during screen transitions), every button at least 44 px tall and wide, chip grids wrap to fewer columns on narrow screens, and on short screens (height ≤ 700 px) the play screen gets more compact so the whole play area – numpad included – fits on a 320 × 568 screen without scrolling. The balloon sky's height follows the viewport height (between 240 and 520 px). Light and dark color scheme follow the system.
 - All state (settings, level medals, free play high scores) is kept in `localStorage`; the game must also work when storage is unavailable.
 - Animations run on `requestAnimationFrame`; time only advances while frames run, so a hidden tab pauses the balloon game instead of jumping ahead.
 

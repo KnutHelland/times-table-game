@@ -41,7 +41,7 @@ header, main {
   padding: 0 16px;
 }
 
-main { padding-bottom: 32px; }
+main { padding-bottom: 32px; overflow-x: clip; } /* the sliding screen transition must not make the page scroll sideways */
 
 header {
   display: flex;
@@ -60,6 +60,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 8px 12px;
+  min-height: 44px; /* comfortable touch target */
   cursor: pointer;
 }
 
@@ -70,7 +71,7 @@ button.big { width: 100%; padding: 14px; font-size: 1.1rem; margin-top: 16px; }
 button.link { border: none; background: none; padding: 4px 0; color: var(--muted); }
 
 .lang { display: flex; gap: 6px; }
-.icon-button { font-size: 1.2rem; line-height: 1; padding: 6px 10px; }
+.icon-button { font-size: 1.3rem; line-height: 1; min-width: 44px; }
 
 .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
@@ -119,7 +120,7 @@ button.link { border: none; background: none; padding: 4px 0; color: var(--muted
 
 /* free play */
 
-.chips { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; }
 .check { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
 .modes { display: grid; gap: 8px; }
 .mode { display: grid; gap: 2px; text-align: left; padding: 12px 14px; }
@@ -226,7 +227,7 @@ button.link { border: none; background: none; padding: 4px 0; color: var(--muted
 
 .sky {
   position: relative;
-  height: min(60vh, 520px);
+  height: clamp(240px, calc(100dvh - 270px), 520px); /* fill the screen below the header and progress bar */
   margin-top: 12px;
   background: var(--sky);
   border-radius: 12px;
@@ -283,6 +284,19 @@ button.link { border: none; background: none; padding: 4px 0; color: var(--muted
 
 @keyframes pop { to { opacity: 0; scale: 1.6; } }
 @keyframes burst { to { opacity: 0; scale: 0.4; } }
+
+/* short phone screens: keep the whole play area, numpad included, without scrolling */
+
+@media (max-height: 700px) {
+  h1 { margin: 10px 0; }
+  .prompt { margin-top: 8px; }
+  .question { font-size: 2.4rem; margin: 6px 0 4px; }
+  .answer { font-size: 2rem; min-height: 2.8rem; }
+  .feedback { margin: 4px 0; }
+  .numpad { gap: 6px; }
+  .numpad button { padding: 8px 0; }
+  .option { padding: 12px 0; }
+}
 
 /* screen transitions */
 
