@@ -409,3 +409,6 @@ $('quit').addEventListener('click', toMenu);
 buildCourse(settings.include1112);
 renderStatic();
 toMenu();
+
+// offline support and home screen install; service workers only work over http(s), not from disk
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js');
