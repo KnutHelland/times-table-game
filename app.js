@@ -305,7 +305,7 @@ function startFreePlay(modeId) {
   if (tables.length === 0) return;
   const mode = FREE_MODES[modeId];
   const factors = range(1, settings.include1112 ? 12 : 10);
-  startGame({ ...mode, deck: new Deck(factsFor({ tables, factors })) },
+  startGame({ ...mode, deck: new Deck(weightByDifficulty(factsFor({ tables, factors }))) },
     result => finishFreePlay(modeId, tables, result));
 }
 

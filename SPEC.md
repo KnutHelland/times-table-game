@@ -131,6 +131,7 @@ There are two courses, depending on the 11-and-12 setting (see Settings), and le
 - With the 11-and-12 setting on, the 11 and 12 tables are added (selected when the setting is turned on).
 - The player can customise the game by toggling specific tables (chips 1–10, plus 11 and 12 when the setting is on). At least one table must be selected; otherwise a warning is shown and the game modes are disabled.
 - Questions are drawn as described under Questions, with factors 1–10, or 1–12 when the 11-and-12 setting is on.
+- Free play weights the questions towards the difficult tables: a fact counts as easy as its easiest factor, and the deck holds each fact that many times – weight 1 for the 1 and 10 tables, 3 for 2, 5 and 11, 5 for 3, 4 and 9, and 8 for 6, 7, 8 and 12. With all tables 1–10, about 11 % of the questions involve a 1 or a 10, while each of 6, 7 and 8 appears in about 26 %. (Levels are not weighted; they already pick their facts.)
 
 ### Game modes
 

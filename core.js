@@ -120,6 +120,14 @@ function factsFor(source) {
   return source.tables.flatMap(table => factors.map(factor => [table, factor]));
 }
 
+// How often a factor's facts come up in free play: the 1s and 10s rarely, the hard tables most often.
+const FACTOR_WEIGHTS = { 1: 1, 10: 1, 2: 3, 5: 3, 11: 3, 3: 5, 4: 5, 9: 5, 6: 8, 7: 8, 8: 8, 12: 8 };
+
+// A fact is as easy as its easiest factor (1 × 7 and 10 × 8 are easy), so it is repeated by that factor's weight.
+function weightByDifficulty(facts) {
+  return facts.flatMap(([a, b]) => Array(Math.min(FACTOR_WEIGHTS[a], FACTOR_WEIGHTS[b])).fill([a, b]));
+}
+
 // Draws every fact once in random order before any repeats, which spreads practice evenly.
 class Deck {
   constructor(facts) {
