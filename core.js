@@ -1,6 +1,6 @@
-const SETTINGS_KEY = 'ttg.settings.v1';
-const SCORES_KEY = 'ttg.scores.v1';
-const PROGRESS_KEY = 'ttg.progress.v1';
+const PROFILES_KEY = 'ttg.profiles.v1';
+// saved before there were profiles; moved into the first profile that is created
+const LEGACY_KEYS = { settings: 'ttg.settings.v1', scores: 'ttg.scores.v1', progress: 'ttg.progress.v1' };
 
 const $ = id => document.getElementById(id);
 
@@ -20,13 +20,68 @@ function save(key, value) {
   } catch {}
 }
 
-const settings = {
+function remove(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch {}
+}
+
+function replaceContents(target, source) {
+  for (const key of Object.keys(target)) delete target[key];
+  Object.assign(target, source);
+}
+
+// --- profiles: each player has their own settings, medals and high scores ---
+
+const AVATARS = ['fox', 'cat', 'dog', 'panda', 'lion', 'unicorn', 'frog', 'owl',
+  'tiger', 'koala', 'rabbit', 'bear', 'penguin', 'monkey', 'octopus', 'dragon'];
+const PROFILE_PARTS = ['settings', 'scores', 'progress'];
+const MAX_NAME_LENGTH = 20;
+
+const profiles = { active: null, list: [], ...load(PROFILES_KEY, {}) };
+const profileKey = (id, part) => `ttg.profile.${id}.${part}.v1`;
+const activeProfile = () => profiles.list.find(profile => profile.id === profiles.active);
+const avatarUrl = avatar => `avatars/${avatar}.svg`;
+const sameName = (a, b) => a.trim().toLocaleLowerCase() === b.trim().toLocaleLowerCase();
+
+const loadOwn = (part, fallback) => profiles.active ? load(profileKey(profiles.active, part), fallback) : fallback;
+
+function saveOwn(part, value) {
+  if (profiles.active) save(profileKey(profiles.active, part), value);
+}
+
+function createProfile(name, avatar) {
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  if (profiles.list.length === 0) {
+    for (const part of PROFILE_PARTS) {
+      const legacy = load(LEGACY_KEYS[part], null);
+      if (legacy === null) continue;
+      save(profileKey(id, part), legacy);
+      remove(LEGACY_KEYS[part]);
+    }
+  } else {
+    save(profileKey(id, 'settings'), { lang: settings.lang });
+  }
+  profiles.list.push({ id, name: name.trim(), avatar });
+  save(PROFILES_KEY, profiles);
+  return id;
+}
+
+function deleteProfile(id) {
+  for (const part of PROFILE_PARTS) remove(profileKey(id, part));
+  profiles.list = profiles.list.filter(profile => profile.id !== id);
+  if (profiles.active === id) profiles.active = null;
+  save(PROFILES_KEY, profiles);
+}
+
+const defaultSettings = () => ({
   lang: navigator.language?.match(/^(nb|nn|no)\b/) ? 'no' : 'en',
   tables: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   include1112: false,
   tab: 'levels',
-  ...load(SETTINGS_KEY, {}),
-};
+});
+
+const settings = { ...defaultSettings(), ...loadOwn('settings', {}) };
 
 const t = (key, ...args) => {
   const value = STRINGS[settings.lang][key];

@@ -1,9 +1,12 @@
 // Offline support: serve the game from the cache, and refresh the cache in the background so a newly
 // published version shows up the next time the game is opened.
-const CACHE = 'times-tables-v1';
+const CACHE = 'times-tables-v2';
+const AVATARS = ['fox', 'cat', 'dog', 'panda', 'lion', 'unicorn', 'frog', 'owl',
+  'tiger', 'koala', 'rabbit', 'bear', 'penguin', 'monkey', 'octopus', 'dragon'];
 const FILES = [
-  './', 'index.html', 'style.css', 'i18n.js', 'core.js', 'levels.js', 'games.js', 'app.js',
+  './', 'index.html', 'style.css', 'i18n.js', 'core.js', 'levels.js', 'games.js', 'profiles.js', 'app.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png',
+  ...AVATARS.map(avatar => `avatars/${avatar}.svg`),
 ];
 
 self.addEventListener('install', event => {

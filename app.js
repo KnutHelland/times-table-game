@@ -14,16 +14,22 @@ const FREE_MODES = {
 const MAX_SCORES = 10;
 const SHOWN_SCORES = 5;
 
-const scores = { ...Object.fromEntries(Object.keys(FREE_MODES).map(id => [id, []])), ...load(SCORES_KEY, {}) };
-const progress = load(PROGRESS_KEY, {}); // level id -> { medal }
+const emptyScores = () => Object.fromEntries(Object.keys(FREE_MODES).map(id => [id, []]));
+const scores = { ...emptyScores(), ...loadOwn('scores', {}) };
+const progress = loadOwn('progress', {}); // level id -> { medal }
 
 let runner = null;
 let renderScreen = null; // redraws the visible screen, e.g. after a language switch
 
+const SCREENS = ['menu', 'settings', 'intro', 'play', 'result', 'profiles', 'new-profile', 'delete-profile'];
+const PROFILE_SCREENS = ['profiles', 'new-profile', 'delete-profile'];
+
 // direction picks the transition: 'forward' slides the screen in from the right, 'back' from the left
 function show(screen, render, direction = 'forward') {
-  for (const id of ['menu', 'settings', 'intro', 'play', 'result']) $(id).hidden = id !== screen;
-  $('open-settings').hidden = screen === 'play' || screen === 'settings';
+  for (const id of SCREENS) $(id).hidden = id !== screen;
+  const inGameOrProfiles = screen === 'play' || PROFILE_SCREENS.includes(screen);
+  $('open-settings').hidden = inGameOrProfiles || screen === 'settings';
+  $('open-profiles').hidden = inGameOrProfiles || !activeProfile();
   $(screen).classList.remove('enter-forward', 'enter-back');
   flash($(screen), `enter-${direction}`);
   renderScreen = render;
@@ -35,6 +41,12 @@ function renderStatic() {
   document.documentElement.lang = settings.lang === 'no' ? 'nb' : 'en';
   document.title = t('title');
   for (const element of document.querySelectorAll('[data-i18n]')) element.textContent = t(element.dataset.i18n);
+  const profile = activeProfile();
+  if (profile) {
+    $('profile-avatar').src = avatarUrl(profile.avatar);
+    $('open-profiles').setAttribute('aria-label', t('profileButton', profile.name));
+    $('open-profiles').title = profile.name;
+  }
   for (const button of document.querySelectorAll('[data-lang]')) {
     button.setAttribute('aria-pressed', button.dataset.lang === settings.lang);
   }
@@ -102,7 +114,7 @@ function renderFreePlay() {
     chip.setAttribute('aria-pressed', settings.tables.includes(n));
     chip.addEventListener('click', () => {
       settings.tables = settings.tables.includes(n) ? settings.tables.filter(x => x !== n) : [...settings.tables, n];
-      save(SETTINGS_KEY, settings);
+      saveOwn('settings', settings);
       renderFreePlay();
     });
     chips.append(chip);
@@ -241,7 +253,7 @@ function finishLevel(level, result) {
   const before = medalOf(level);
   if (medal > before) {
     progress[level.id] = { medal };
-    save(PROGRESS_KEY, progress);
+    saveOwn('progress', progress);
   }
   if (medal > 0) playMedal();
   const unlockedNow = next && !nextWasUnlocked && isUnlocked(next);
@@ -328,7 +340,7 @@ function finishFreePlay(modeId, tables, result) {
   const score = { time: result.elapsedMs, correct: result.correct, wrong: result.wrong, score: result.score,
     tables, date: new Date().toISOString() };
   scores[modeId] = [...scores[modeId], score].sort((a, b) => compareScores(modeId, a, b)).slice(0, MAX_SCORES);
-  save(SCORES_KEY, scores);
+  saveOwn('scores', scores);
   const rank = scores[modeId].indexOf(score) + 1;
   if (rank === 1) playMedal();
   show('result', () => renderFreeResult(modeId, tables, result, score, rank));
@@ -366,6 +378,17 @@ function toMenu() {
   show('menu', renderMenu, 'back');
 }
 
+function switchProfile(id) {
+  profiles.active = id;
+  save(PROFILES_KEY, profiles);
+  replaceContents(settings, { ...defaultSettings(), ...loadOwn('settings', {}) });
+  replaceContents(scores, { ...emptyScores(), ...loadOwn('scores', {}) });
+  replaceContents(progress, loadOwn('progress', {}));
+  buildCourse(settings.include1112);
+  renderStatic();
+  toMenu();
+}
+
 // --- wiring ---
 
 document.addEventListener('keydown', e => {
@@ -377,7 +400,7 @@ document.addEventListener('keydown', e => {
 for (const button of document.querySelectorAll('[data-lang]')) {
   button.addEventListener('click', () => {
     settings.lang = button.dataset.lang;
-    save(SETTINGS_KEY, settings);
+    saveOwn('settings', settings);
     renderStatic();
     renderScreen?.();
   });
@@ -386,7 +409,7 @@ for (const button of document.querySelectorAll('[data-lang]')) {
 for (const button of document.querySelectorAll('[data-tab]')) {
   button.addEventListener('click', () => {
     settings.tab = button.dataset.tab;
-    save(SETTINGS_KEY, settings);
+    saveOwn('settings', settings);
     renderMenu();
   });
 }
@@ -395,7 +418,7 @@ $('include-11-12').addEventListener('change', e => {
   settings.include1112 = e.target.checked;
   const without = settings.tables.filter(n => n <= 10);
   settings.tables = settings.include1112 ? [...without, 11, 12] : without;
-  save(SETTINGS_KEY, settings);
+  saveOwn('settings', settings);
   buildCourse(settings.include1112);
 });
 
@@ -405,10 +428,13 @@ $('open-settings').addEventListener('click', () => show('settings', () => {
 $('close-settings').addEventListener('click', toMenu);
 
 $('quit').addEventListener('click', toMenu);
+$('open-profiles').addEventListener('click', () => showProfiles());
 
+if (!activeProfile()) profiles.active = null;
 buildCourse(settings.include1112);
 renderStatic();
-toMenu();
+if (profiles.active) toMenu();
+else showProfiles();
 
 // offline support and home screen install; service workers only work over http(s), not from disk
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js');

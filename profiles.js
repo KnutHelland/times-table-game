@@ -1,0 +1,129 @@
+// Profile screens: choose who is playing, create a profile, delete one after typing its name.
+
+function avatarImage(avatar, className) {
+  const image = el('img', className);
+  image.src = avatarUrl(avatar);
+  image.alt = '';
+  return image;
+}
+
+function showProfiles(direction = 'forward') {
+  if (profiles.list.length === 0) return showNewProfile();
+  show('profiles', () => {
+    const container = $('profiles');
+    container.replaceChildren();
+    if (activeProfile()) {
+      const back = el('button', 'link', t('back'));
+      back.addEventListener('click', toMenu);
+      container.append(back);
+    }
+    container.append(el('h2', '', t('whoIsPlaying')));
+
+    const list = el('div', 'profile-list');
+    for (const profile of profiles.list) {
+      const row = el('div', 'profile-row');
+      const choose = el('button', 'profile-choose');
+      choose.setAttribute('aria-pressed', profile.id === profiles.active);
+      choose.append(avatarImage(profile.avatar, 'avatar'), el('span', '', profile.name));
+      choose.addEventListener('click', () => switchProfile(profile.id));
+      const remove = el('button', 'icon-button', '🗑');
+      remove.setAttribute('aria-label', t('deleteNamed', profile.name));
+      remove.title = t('deleteNamed', profile.name);
+      remove.addEventListener('click', () => showDeleteProfile(profile));
+      row.append(choose, remove);
+      list.append(row);
+    }
+
+    const add = el('button', 'big', t('newProfile'));
+    add.addEventListener('click', showNewProfile);
+    container.append(list, add);
+  }, direction);
+}
+
+function showNewProfile() {
+  const firstProfile = profiles.list.length === 0;
+  const usedAvatars = profiles.list.map(profile => profile.avatar);
+  let avatar = AVATARS.find(a => !usedAvatars.includes(a)) ?? AVATARS[0];
+
+  show('new-profile', () => {
+    const container = $('new-profile');
+    container.replaceChildren();
+    if (!firstProfile) {
+      const back = el('button', 'link', t('back'));
+      back.addEventListener('click', () => showProfiles('back'));
+      container.append(back);
+    }
+    container.append(el('h2', '', t(firstProfile ? 'welcome' : 'newProfileTitle')));
+    if (firstProfile) container.append(el('p', 'small', t('welcomeHelp')));
+
+    const name = el('input', 'text-input');
+    name.id = 'profile-name';
+    name.maxLength = MAX_NAME_LENGTH;
+    name.autocomplete = 'off';
+    const label = el('label', 'field-label', t('profileName'));
+    label.htmlFor = name.id;
+    const error = el('p', 'warning', t('nameTaken'));
+    error.hidden = true;
+
+    const grid = el('div', 'avatar-grid');
+    const avatarButtons = AVATARS.map((option, index) => {
+      const button = el('button', 'avatar-option');
+      button.append(avatarImage(option, 'avatar'));
+      button.setAttribute('aria-label', t('picture', index + 1));
+      button.disabled = usedAvatars.includes(option) && option !== avatar;
+      button.addEventListener('click', () => {
+        avatar = option;
+        update();
+      });
+      grid.append(button);
+      return button;
+    });
+
+    const create = el('button', 'primary big', t('createProfile'));
+    const nameIsTaken = () => profiles.list.some(profile => sameName(profile.name, name.value));
+    const update = () => {
+      AVATARS.forEach((option, i) => avatarButtons[i].setAttribute('aria-pressed', option === avatar));
+      error.hidden = !nameIsTaken();
+      create.disabled = name.value.trim() === '' || nameIsTaken();
+    };
+    const submit = () => {
+      if (!create.disabled) switchProfile(createProfile(name.value, avatar));
+    };
+    name.addEventListener('input', update);
+    name.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+    create.addEventListener('click', submit);
+
+    container.append(label, name, error, el('h3', '', t('choosePicture')), grid, create);
+    update();
+    name.focus();
+  });
+}
+
+function showDeleteProfile(profile) {
+  show('delete-profile', () => {
+    const container = $('delete-profile');
+    const back = el('button', 'link', t('back'));
+    back.addEventListener('click', () => showProfiles('back'));
+
+    const heading = el('div', 'profile-heading');
+    heading.append(avatarImage(profile.avatar, 'avatar'), el('h2', '', t('deleteNamed', profile.name)));
+
+    const confirmation = el('input', 'text-input');
+    confirmation.id = 'delete-confirmation';
+    confirmation.autocomplete = 'off';
+    const label = el('label', 'field-label', t('typeNameToConfirm', profile.name));
+    label.htmlFor = confirmation.id;
+
+    const remove = el('button', 'danger big', t('deleteForGood'));
+    remove.disabled = true;
+    confirmation.addEventListener('input', () => { remove.disabled = !sameName(confirmation.value, profile.name); });
+    remove.addEventListener('click', () => {
+      if (remove.disabled) return;
+      deleteProfile(profile.id);
+      showProfiles('back');
+    });
+
+    container.replaceChildren(back, heading, el('p', '', t('deleteWarning', profile.name)), label, confirmation, remove);
+    confirmation.focus();
+  });
+}

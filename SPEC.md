@@ -7,7 +7,7 @@ This file is the complete specification of the game. It is written so that it ca
 - A single web page made of plain HTML, CSS and JavaScript (classic `<script>` tags, no modules, no build step, no dependencies), so it works when `index.html` is opened directly from disk.
 - Works with mouse, touch and keyboard, on phone and desktop (content column max 460 px). Mobile requirements: no horizontal scrolling at 320 px width (also not during screen transitions), every button at least 44 px tall and wide, chip grids wrap to fewer columns on narrow screens, and on short screens (height ≤ 700 px) the play screen gets more compact so the whole play area – numpad included – fits on a 320 × 568 screen without scrolling. The balloon sky's height follows the viewport height (between 240 and 520 px). Light and dark color scheme follow the system.
 - Installable as an app (PWA) with offline play when served over HTTPS (for example GitHub Pages): a web app manifest (name "Times tables", standalone display, theme color #2f6fdf, 192 and 512 px icons showing a white "7×8" on the blue theme color) and a service worker that caches all game files on the first visit, serves them from the cache and refreshes the cache in the background. The service worker is only registered over http(s), so opening `index.html` from disk still works.
-- All state (settings, level medals, free play high scores) is kept in `localStorage`; the game must also work when storage is unavailable.
+- All state (the player list, and each player's settings, level medals and free play high scores) is kept in `localStorage`; the game must also work when storage is unavailable.
 - Animations run on `requestAnimationFrame`; time only advances while frames run, so a hidden tab pauses the balloon game instead of jumping ahead.
 
 ## Look and feel
@@ -23,9 +23,21 @@ This file is the complete specification of the game. It is written so that it ca
 - The multiplication sign is `×` in English and `·` (a raised dot) in Norwegian, everywhere an expression is shown. Because of that, `·` must not be used as a separator in any game text (use `–`).
 - Decimal separator for times: `.` in English, `,` in Norwegian (`12.3 s` / `12,3 s`).
 
+## Players (profiles)
+
+Several people (for example a parent and children) can play on the same device, each as their own local player. The UI says "player" ("spiller"), not "profile".
+
+- A player has a name (1–20 characters, unique ignoring case and surrounding spaces) and a picture. Each player has their own settings (language, selected tables, 11-and-12 setting, menu tab), level medals and free play high scores. A new player starts with the current language and otherwise default settings.
+- Pictures: 16 animal faces from Twemoji 15.1.0 (drawn by people, not AI generated, CC BY 4.0, bundled with the game so they work offline): fox, cat, dog, panda, lion, unicorn, frog, owl, tiger, koala, rabbit, bear, penguin, monkey, octopus, dragon. The Settings screen credits them ("Pictures: Twemoji by Twitter and contributors, CC BY 4.0.").
+- The game remembers the last chosen player and starts as that player. The header shows the player's picture next to the ⚙ button (both hidden while playing and on the player screens); tapping it opens the player list.
+- **First start** (no players yet): a "Welcome!" screen explains that each person gets their own player with own medals, high scores and settings, and asks for a name and a picture. Medals, high scores and settings saved before players existed are moved into this first player.
+- **Who is playing?** screen: one row per player (picture and name; the current player is highlighted) with a 🗑 button beside it, and a "+ New player" button. Tapping a player switches to them and goes to the menu. A Back button is shown when a player is active.
+- **New player** screen: name field, a 4-column grid of the pictures (pictures used by other players are disabled, the first free one is preselected), and a "Start playing" button that is enabled when the name is filled in and not taken (a warning shows when it is taken). Enter in the name field also creates the player. The new player becomes the current player.
+- **Delete player** screen (from 🗑): shows the player's picture and "Delete <name>", warns that all medals, high scores and settings are deleted and that it cannot be undone, and has a field "Type <name> to confirm". The red "Delete for good" button is enabled only when the typed text equals the name (ignoring case and surrounding spaces). After deleting, the player list is shown (with no Back button if the current player was deleted); when no players remain, the Welcome screen is shown.
+
 ## Menu
 
-Two tabs, remembered between visits: **Levels** (default) and **Free play**. A ⚙ button in the header (hidden while playing) opens Settings.
+Two tabs, remembered between visits: **Levels** (default) and **Free play**. The header has the player picture (see Players) and a ⚙ button, both hidden while playing; ⚙ opens Settings.
 
 ## Settings
 

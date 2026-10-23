@@ -13,7 +13,10 @@
 <body>
   <header>
     <h1 data-i18n="title"></h1>
-    <button id="open-settings" class="icon-button" aria-label="Settings">⚙</button>
+    <div class="header-buttons">
+      <button id="open-profiles" class="icon-button avatar-button" hidden><img id="profile-avatar" class="avatar" alt=""></button>
+      <button id="open-settings" class="icon-button" aria-label="Settings">⚙</button>
+    </div>
   </header>
 
   <main>
@@ -52,7 +55,12 @@
         <span data-i18n="include1112"></span>
       </label>
       <p class="small" data-i18n="include1112Help"></p>
+      <p class="small credits" data-i18n="avatarCredits"></p>
     </section>
+
+    <section id="profiles" class="screen" hidden></section>
+    <section id="new-profile" class="screen" hidden></section>
+    <section id="delete-profile" class="screen" hidden></section>
 
     <section id="intro" class="screen" hidden></section>
 
@@ -74,6 +82,7 @@
   <script src="core.js"></script>
   <script src="levels.js"></script>
   <script src="games.js"></script>
+  <script src="profiles.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

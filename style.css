@@ -72,6 +72,38 @@ button.link { border: none; background: none; padding: 4px 0; color: var(--muted
 
 .lang { display: flex; gap: 6px; }
 .icon-button { font-size: 1.3rem; line-height: 1; min-width: 44px; }
+.header-buttons { display: flex; gap: 6px; }
+
+button.danger { background: var(--fail); border-color: var(--fail); color: #fff; }
+
+/* profiles */
+
+.avatar { display: block; width: 40px; height: 40px; }
+.avatar-button { padding: 4px; }
+.avatar-button .avatar { width: 32px; height: 32px; }
+
+.profile-list { display: grid; gap: 8px; }
+.profile-row { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.profile-choose { display: flex; align-items: center; gap: 12px; text-align: left; font-size: 1.1rem; padding: 8px 12px; }
+.profile-heading { display: flex; align-items: center; gap: 12px; margin: 16px 0 8px; }
+.profile-heading h2 { margin: 0; }
+
+.field-label { display: block; margin: 16px 0 6px; font-weight: 600; }
+.text-input {
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  width: 100%;
+  min-height: 44px;
+}
+
+.avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.avatar-option { display: grid; place-items: center; padding: 6px; }
+.avatar-option[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 25%, var(--card)); border: 2px solid var(--accent); }
+.credits { margin-top: 24px; }
 
 .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
