@@ -116,11 +116,11 @@ The order follows a common teaching order (2, 10, 5, 1, square numbers, 4, 3, 9,
 - Default: all multiplication tables from 1 to 10.
 - An "Include 11 and 12" checkbox adds the 11 and 12 tables (selected when the box is ticked, removed when it is cleared).
 - The player can customise the game by toggling specific tables (chips 1–10, plus 11 and 12 when included). At least one table must be selected; otherwise a warning is shown and the game modes are disabled.
-- Questions are drawn as described under Questions, with factors 1–10, or 1–12 when 11 and 12 are included. All free play modes use the Type-the-answer gameplay.
+- Questions are drawn as described under Questions, with factors 1–10, or 1–12 when 11 and 12 are included.
 
 ### Game modes
 
-Each mode has its own high score list.
+All gameplays from the levels are available as one flat list of modes, each with its own high score list. Time race, Time race deluxe and Exercise use the Type-the-answer gameplay.
 
 1. **Time race:** answer 10 questions correctly in a row, as fast as possible.
 2. **Time race deluxe:** answer 20 questions correctly in a row, as fast as possible.
@@ -128,10 +128,13 @@ Each mode has its own high score list.
    - Both time races: a progress bar shows how much is left to finish the set ("4 of 10 in a row"). Each wrong answer resets the progress back to 0 of 10 (or 20).
    - The score is the total time from start to finish.
 3. **Exercise:** 20 questions with no time limit. Wrong answers are allowed and logged; the result screen lists them. The high score is ranked first by number of correct answers, then by speed.
+4. **Multiple choice**, 5. **True or false**, 6. **Find the question**, 7. **Missing number:** like Exercise (20 questions, no time limit, mistakes logged and listed, ranked by correct answers, then speed), but with that gameplay.
+8. **Match the pairs:** 3 rounds of 5 pairs. Ranked by fewest mistakes, then speed.
+9. **Balloon pop:** 60 seconds, balloons rise through the field in 7 s at the start. Ranked by most points, then fewest mistakes (wrong pops plus escaped answer balloons).
 
 ### Result screen and high scores
 
-- Shows the mode, the time (and correct count for Exercise), "New high score!" when it is the best entry, or "Place N on the high score list" for places 2–5.
+- Shows the mode and its score (time for the time races; correct count and time for the 20-question modes; time and mistakes for Match the pairs; points and mistakes for Balloon pop), "New high score!" when it is the best entry, or "Place N on the high score list" for places 2–5.
 - Buttons: Play again, Menu.
 - The high score list of the mode (top 5 shown, top 10 stored), each entry with its score and the tables it was played with ("tables 1–10", "tables 2, 5, 7"). The new entry is highlighted.
 - The free play tab shows each mode's best score on the mode button.

@@ -1,12 +1,20 @@
+// ranking: time = fastest first; correct = most right, then fastest; mistakes = fewest mistakes, then fastest;
+// score = most points, then fewest mistakes.
 const FREE_MODES = {
-  race10: { streak: 10, timeLimit: 8, name: 'timeRace', desc: 'timeRaceDesc' },
-  race20: { streak: 20, timeLimit: 8, name: 'timeRaceDeluxe', desc: 'timeRaceDeluxeDesc' },
-  exercise: { count: 20, timeLimit: null, name: 'exercise', desc: 'exerciseDesc' },
+  race10: { game: 'type', streak: 10, timeLimit: 8, ranking: 'time', name: 'timeRace', desc: 'timeRaceDesc' },
+  race20: { game: 'type', streak: 20, timeLimit: 8, ranking: 'time', name: 'timeRaceDeluxe', desc: 'timeRaceDeluxeDesc' },
+  exercise: { game: 'type', count: 20, ranking: 'correct', name: 'exercise', desc: 'exerciseDesc' },
+  choice: { game: 'choice', count: 20, ranking: 'correct', name: 'game_choice', desc: 'exerciseDesc' },
+  trueFalse: { game: 'trueFalse', count: 20, ranking: 'correct', name: 'game_trueFalse', desc: 'exerciseDesc' },
+  pickQuestion: { game: 'pickQuestion', count: 20, ranking: 'correct', name: 'game_pickQuestion', desc: 'exerciseDesc' },
+  missing: { game: 'missing', count: 20, ranking: 'correct', name: 'game_missing', desc: 'exerciseDesc' },
+  match: { game: 'match', rounds: 3, pairs: 5, ranking: 'mistakes', name: 'game_match', desc: 'freeMatchDesc' },
+  balloons: { game: 'balloons', seconds: 60, rise: 7, ranking: 'score', name: 'game_balloons', desc: 'freeBalloonsDesc' },
 };
 const MAX_SCORES = 10;
 const SHOWN_SCORES = 5;
 
-const scores = { race10: [], race20: [], exercise: [], ...load(SCORES_KEY, {}) };
+const scores = { ...Object.fromEntries(Object.keys(FREE_MODES).map(id => [id, []])), ...load(SCORES_KEY, {}) };
 const progress = load(PROGRESS_KEY, {}); // level id -> { medal }
 
 let runner = null;
@@ -273,14 +281,21 @@ function mistakeList(mistakes) {
 
 // --- free play ---
 
-function compareScores(mode, a, b) {
-  if (mode === 'exercise' && a.correct !== b.correct) return b.correct - a.correct;
+function compareScores(modeId, a, b) {
+  const { ranking } = FREE_MODES[modeId];
+  if (ranking === 'correct' && a.correct !== b.correct) return b.correct - a.correct;
+  if (ranking === 'mistakes' && a.wrong !== b.wrong) return a.wrong - b.wrong;
+  if (ranking === 'score') return b.score - a.score || a.wrong - b.wrong;
   return a.time - b.time;
 }
 
-function describeScore(mode, score) {
+function describeScore(modeId, score) {
+  const mode = FREE_MODES[modeId];
   const time = formatTime(score.time);
-  return mode === 'exercise' ? t('correctOf', score.correct, FREE_MODES[mode].count, time) : time;
+  if (mode.ranking === 'correct') return t('correctOf', score.correct, mode.count, time);
+  if (mode.ranking === 'mistakes') return `${time} – ${t('statMistakes', score.wrong)}`;
+  if (mode.ranking === 'score') return `${t('points', score.score)} – ${t('statMistakes', score.wrong)}`;
+  return time;
 }
 
 function startFreePlay(modeId) {
@@ -288,12 +303,13 @@ function startFreePlay(modeId) {
   if (tables.length === 0) return;
   const mode = FREE_MODES[modeId];
   const factors = range(1, settings.include1112 ? 12 : 10);
-  startGame({ ...mode, game: 'type', deck: new Deck(factsFor({ tables, factors })) },
+  startGame({ ...mode, deck: new Deck(factsFor({ tables, factors })) },
     result => finishFreePlay(modeId, tables, result));
 }
 
 function finishFreePlay(modeId, tables, result) {
-  const score = { time: result.elapsedMs, correct: result.correct, tables, date: new Date().toISOString() };
+  const score = { time: result.elapsedMs, correct: result.correct, wrong: result.wrong, score: result.score,
+    tables, date: new Date().toISOString() };
   scores[modeId] = [...scores[modeId], score].sort((a, b) => compareScores(modeId, a, b)).slice(0, MAX_SCORES);
   save(SCORES_KEY, scores);
   const rank = scores[modeId].indexOf(score) + 1;
@@ -305,12 +321,11 @@ function renderFreeResult(modeId, tables, result, score, rank) {
   const mode = FREE_MODES[modeId];
   const container = $('result');
   container.replaceChildren(el('h2', '', `${t(mode.name)} – ${t('finished')}`));
-  container.append(el('p', 'result-main', modeId === 'exercise'
-    ? t('correctOf', score.correct, mode.count, formatTime(score.time))
-    : t('finishedIn', formatTime(score.time))));
+  container.append(el('p', 'result-main',
+    mode.ranking === 'time' ? t('finishedIn', formatTime(score.time)) : describeScore(modeId, score)));
   const record = rank === 1 ? t('newRecord') : rank > 0 && rank <= SHOWN_SCORES ? t('rank', rank) : '';
   if (record) container.append(el('p', 'record', record));
-  if (modeId === 'exercise' && result.mistakes.length) container.append(mistakeList(result.mistakes));
+  if (mode.ranking === 'correct' && result.mistakes.length) container.append(mistakeList(result.mistakes));
 
   const buttons = el('div', 'buttons');
   const again = el('button', 'primary', t('again'));
