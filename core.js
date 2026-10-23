@@ -1,0 +1,170 @@
+const SETTINGS_KEY = 'ttg.settings.v1';
+const SCORES_KEY = 'ttg.scores.v1';
+const PROGRESS_KEY = 'ttg.progress.v1';
+
+const $ = id => document.getElementById(id);
+
+// --- storage (may be unavailable in private windows) ---
+
+function load(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function save(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+}
+
+const settings = {
+  lang: navigator.language?.match(/^(nb|nn|no)\b/) ? 'no' : 'en',
+  tables: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  include1112: false,
+  tab: 'levels',
+  ...load(SETTINGS_KEY, {}),
+};
+
+const t = (key, ...args) => {
+  const value = STRINGS[settings.lang][key];
+  return typeof value === 'function' ? value(...args) : value;
+};
+
+// --- formatting ---
+
+function formatNumber(value, decimals) {
+  const text = value.toFixed(decimals);
+  return settings.lang === 'no' ? text.replace('.', ',') : text;
+}
+
+const formatTime = ms => `${formatNumber(ms / 1000, 1)} s`;
+const formatSeconds = s => `${formatNumber(s, Number.isInteger(s) ? 0 : 1)} s`;
+const expression = (a, b) => `${a} ${t('times')} ${b}`;
+
+function formatTables(tables) {
+  const parts = [];
+  for (let i = 0; i < tables.length; i++) {
+    let end = i;
+    while (tables[end + 1] === tables[end] + 1) end++;
+    parts.push(end - i >= 2 ? `${tables[i]}–${tables[end]}` : tables.slice(i, end + 1).join(', '));
+    i = end;
+  }
+  return parts.join(', ');
+}
+
+function el(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (text !== undefined) element.textContent = text;
+  return element;
+}
+
+function setText(element, text) {
+  if (element.textContent !== text) element.textContent = text;
+}
+
+const range = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => from + i);
+const randomItem = list => list[Math.floor(Math.random() * list.length)];
+
+function shuffle(list) {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+// --- sound: generated tones, so there are no audio files to load ---
+
+let audio;
+
+function beep(notes) {
+  try {
+    audio ??= new AudioContext();
+    let start = audio.currentTime;
+    for (const [frequency, duration] of notes) {
+      const osc = audio.createOscillator();
+      const gain = audio.createGain();
+      osc.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.15, start);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+      osc.connect(gain).connect(audio.destination);
+      osc.start(start);
+      osc.stop(start + duration);
+      start += duration * 0.8;
+    }
+  } catch {}
+}
+
+const playCorrect = () => beep([[660, 0.09], [990, 0.14]]);
+const playWrong = () => beep([[220, 0.25]]);
+const playMedal = () => beep([[523, 0.12], [659, 0.12], [784, 0.12], [1047, 0.3]]);
+
+function flash(element, className) {
+  element.classList.remove(className);
+  void element.offsetWidth; // restart the CSS animation
+  element.classList.add(className);
+}
+
+// --- questions ---
+
+// A fact source is { tables, factors } or { facts: 'squares' | 'tricky' }.
+function factsFor(source) {
+  if (source.facts === 'squares') return range(1, 10).map(n => [n, n]);
+  if (source.facts === 'tricky') return range(6, 9).flatMap(a => range(6, 9).map(b => [a, b]));
+  const factors = source.factors ?? range(1, 10);
+  return source.tables.flatMap(table => factors.map(factor => [table, factor]));
+}
+
+// Draws every fact once in random order before any repeats, which spreads practice evenly.
+class Deck {
+  constructor(facts) {
+    this.facts = facts;
+    this.pile = [];
+    this.last = null;
+  }
+
+  next() {
+    if (this.pile.length === 0) this.pile = shuffle(this.facts);
+    let [a, b] = this.pile.pop();
+    if (this.last && this.facts.length > 1 && a * b === this.last.answer && this.pile.length > 0) {
+      this.pile.unshift([a, b]);
+      [a, b] = this.pile.pop();
+    }
+    if (a !== b && Math.random() < 0.5) [a, b] = [b, a];
+    this.last = { a, b, answer: a * b };
+    return this.last;
+  }
+}
+
+// Plausible wrong answers: neighbouring facts, off-by-one and swapped digits.
+function wrongAnswers(question, count) {
+  const { a, b, answer } = question;
+  const candidates = [a * (b + 1), a * (b - 1), (a + 1) * b, (a - 1) * b, answer + 1, answer - 1,
+    answer + 10, answer - 10, Number(String(answer).split('').reverse().join('')), a + b];
+  const unique = [...new Set(candidates)].filter(n => n > 0 && n !== answer);
+  const picked = shuffle(unique).slice(0, count);
+  for (let offset = 2; picked.length < count; offset++) {
+    if (!picked.includes(answer + offset)) picked.push(answer + offset);
+  }
+  return picked;
+}
+
+// Expressions close to the question whose product differs from its answer.
+function wrongExpressions(question, count) {
+  const { a, b, answer } = question;
+  const candidates = [[a, b + 1], [a, b - 1], [a + 1, b], [a - 1, b], [a + 1, b + 1], [a - 1, b - 1],
+    [a, b + 2], [a + 2, b], [a, b - 2], [a - 2, b]];
+  const seen = new Set([answer]);
+  const picked = [];
+  for (const [x, y] of shuffle(candidates)) {
+    if (x < 1 || y < 1 || seen.has(x * y) || picked.length >= count) continue;
+    seen.add(x * y);
+    picked.push(Math.random() < 0.5 ? [x, y] : [y, x]);
+  }
+  return picked;
+}
