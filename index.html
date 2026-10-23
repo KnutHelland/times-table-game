@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Times Tables</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1 data-i18n="title"></h1>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-lang="en">EN</button>
+      <button data-lang="no">NO</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="menu" class="screen">
+      <h2 data-i18n="tables"></h2>
+      <div id="table-chips" class="chips"></div>
+      <label class="check">
+        <input type="checkbox" id="include-11-12">
+        <span data-i18n="include1112"></span>
+      </label>
+      <p id="table-warning" class="warning" data-i18n="selectOne" hidden></p>
+
+      <h2 data-i18n="mode"></h2>
+      <div id="modes" class="modes"></div>
+    </section>
+
+    <section id="play" class="screen" hidden>
+      <div class="play-top">
+        <button id="quit" class="link" data-i18n="quit"></button>
+        <span id="clock">0.0 s</span>
+      </div>
+      <div class="bar set-bar"><div id="set-progress"></div></div>
+      <p id="set-label" class="small"></p>
+
+      <div id="question" class="question"></div>
+      <div id="answer" class="answer"></div>
+      <div class="bar time-bar" id="time-bar"><div id="time-left"></div></div>
+      <p id="feedback" class="feedback"></p>
+
+      <div id="numpad" class="numpad">
+        <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+        <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+        <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+        <button data-key="Backspace" aria-label="Backspace">⌫</button><button data-key="0">0</button><button data-key="Enter" class="enter">⏎</button>
+      </div>
+    </section>
+
+    <section id="result" class="screen" hidden>
+      <h2 id="result-title"></h2>
+      <p id="result-main" class="result-main"></p>
+      <p id="result-record" class="record"></p>
+      <div id="result-mistakes"></div>
+      <div class="buttons">
+        <button id="again" class="primary" data-i18n="again"></button>
+        <button id="to-menu" data-i18n="menu"></button>
+      </div>
+      <h3 data-i18n="highscores"></h3>
+      <ol id="result-scores" class="scores"></ol>
+    </section>
+  </main>
+
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

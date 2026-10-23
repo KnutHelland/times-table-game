@@ -1,0 +1,153 @@
+:root {
+  --bg: #f7f7f5;
+  --fg: #222;
+  --muted: #6b6b6b;
+  --card: #fff;
+  --line: #ddd;
+  --accent: #2f6fdf;
+  --ok: #2e9d57;
+  --fail: #d0443b;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1c1e;
+    --fg: #eee;
+    --muted: #9a9a9a;
+    --card: #26282b;
+    --line: #3a3c40;
+    --accent: #6c9cf0;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.4 system-ui, sans-serif;
+}
+
+header, main {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h1 { font-size: 1.3rem; }
+h2 { font-size: 1rem; margin: 20px 0 8px; }
+h3 { font-size: 0.95rem; margin: 20px 0 6px; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+button:disabled { opacity: 0.4; cursor: default; }
+button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.link { border: none; background: none; padding: 4px 0; color: var(--muted); }
+
+.lang { display: flex; gap: 4px; }
+.lang button { padding: 4px 10px; font-size: 0.85rem; }
+
+.chips {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.check { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+.warning { color: var(--fail); }
+.small { font-size: 0.85rem; color: var(--muted); margin: 4px 0; }
+
+.modes { display: grid; gap: 8px; }
+.mode { display: grid; gap: 2px; text-align: left; padding: 12px 14px; }
+.mode .best { font-size: 0.85rem; color: var(--accent); }
+.mode .best:empty { display: none; }
+
+/* play */
+
+.play-top { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+#clock { font-variant-numeric: tabular-nums; color: var(--muted); }
+
+.bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.bar > div { height: 100%; width: 0; background: var(--accent); transition: width 0.2s; }
+.set-bar { margin-top: 8px; }
+.time-bar { height: 4px; margin: 0 auto; width: 60%; }
+.time-bar > div { background: var(--muted); transition: none; }
+
+.question {
+  font-size: 3rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 28px 0 8px;
+  border-radius: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.answer {
+  font-size: 2.4rem;
+  text-align: center;
+  min-height: 3.4rem;
+  margin: 0 auto 8px;
+  width: 60%;
+  border-bottom: 2px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+
+.answer.correcting { border-color: var(--fail); }
+.feedback { min-height: 2.8em; text-align: center; color: var(--fail); margin: 8px 0; }
+
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+  touch-action: manipulation;
+}
+
+.numpad button { font-size: 1.5rem; padding: 14px 0; }
+.numpad .enter { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.ok { animation: ok 0.35s ease-out; }
+.fail { animation: fail 0.5s ease-out; }
+.shake { animation: shake 0.3s; }
+
+@keyframes ok {
+  from { background: color-mix(in srgb, var(--ok) 35%, transparent); }
+  to { background: transparent; }
+}
+
+@keyframes fail {
+  from { background: color-mix(in srgb, var(--fail) 35%, transparent); }
+  to { background: transparent; }
+}
+
+@keyframes shake {
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* result */
+
+.result-main { font-size: 1.4rem; margin: 8px 0; }
+.record { color: var(--ok); font-weight: 600; min-height: 1.4em; margin: 4px 0; }
+.buttons { display: flex; gap: 8px; margin-top: 16px; }
+.mistakes, .scores { margin: 0; padding-left: 22px; }
+.scores li { padding: 2px 0; }
+.scores .highlight { font-weight: 600; color: var(--accent); }
+.scores .empty { list-style: none; margin-left: -22px; color: var(--muted); }
