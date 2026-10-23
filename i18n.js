@@ -124,6 +124,7 @@ const STRINGS = {
     typeNameToConfirm: name => `Type ${name} to confirm`,
     deleteForGood: 'Delete for good',
     avatarCredits: 'Pictures: Twemoji by Twitter and contributors, CC BY 4.0.',
+    updateReady: 'New version – tap to update',
   },
   no: {
     title: 'Gangetabellen',
@@ -250,5 +251,6 @@ const STRINGS = {
     typeNameToConfirm: name => `Skriv ${name} for å bekrefte`,
     deleteForGood: 'Slett for godt',
     avatarCredits: 'Bilder: Twemoji av Twitter og bidragsytere, CC BY 4.0.',
+    updateReady: 'Ny versjon – trykk for å oppdatere',
   },
 };

@@ -20,6 +20,7 @@ const progress = loadOwn('progress', {}); // level id -> { medal }
 
 let runner = null;
 let renderScreen = null; // redraws the visible screen, e.g. after a language switch
+let updateReady = false; // a newer version of the game has been downloaded and is used after a reload
 
 const SCREENS = ['menu', 'settings', 'intro', 'play', 'result', 'profiles', 'new-profile', 'delete-profile'];
 const PROFILE_SCREENS = ['profiles', 'new-profile', 'delete-profile'];
@@ -30,6 +31,7 @@ function show(screen, render, direction = 'forward') {
   const inGameOrProfiles = screen === 'play' || PROFILE_SCREENS.includes(screen);
   $('open-settings').hidden = inGameOrProfiles || screen === 'settings';
   $('open-profiles').hidden = inGameOrProfiles || !activeProfile();
+  $('update-banner').hidden = !updateReady || screen === 'play';
   $(screen).classList.remove('enter-forward', 'enter-back');
   flash($(screen), `enter-${direction}`);
   renderScreen = render;
@@ -429,6 +431,7 @@ $('close-settings').addEventListener('click', toMenu);
 
 $('quit').addEventListener('click', toMenu);
 $('open-profiles').addEventListener('click', () => showProfiles());
+$('update-banner').addEventListener('click', () => location.reload());
 
 if (!activeProfile()) profiles.active = null;
 buildCourse(settings.include1112);
@@ -437,4 +440,20 @@ if (profiles.active) toMenu();
 else showProfiles();
 
 // offline support and home screen install; service workers only work over http(s), not from disk
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js');
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  const hadController = !!navigator.serviceWorker.controller; // false on the very first visit, which is no update
+  const offerUpdate = () => {
+    updateReady = true;
+    if ($('play').hidden) $('update-banner').hidden = false;
+  };
+  navigator.serviceWorker.addEventListener('message', e => { if (e.data === 'updated') offerUpdate(); });
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) offerUpdate(); });
+  navigator.serviceWorker.register('sw.js');
+  const checkForUpdate = () => {
+    navigator.serviceWorker.controller?.postMessage('checkForUpdate');
+    navigator.serviceWorker.getRegistration().then(registration => registration?.update()).catch(() => {}); // offline
+  };
+  checkForUpdate();
+  // an installed app is often resumed from the background instead of started, so also check when it is shown again
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
+}

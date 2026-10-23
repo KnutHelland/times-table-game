@@ -14,8 +14,14 @@ GitHub Pages is the right fit: it serves the files over HTTPS, which is what And
 ## Offline and install support
 
 - `manifest.webmanifest` gives the app its name, icon (`icons/`), colors and full-screen ("standalone") display.
-- `sw.js` is a service worker that caches all game files on the first visit. After that the game starts from the cache, also without network. When online, it fetches fresh files in the background, so a new version shows up the next time the game is opened.
-- Progress (medals, high scores, settings) is stored in the browser on the phone.
+- `sw.js` is a service worker that caches all game files on the first visit. After that the game starts from the cache, also without network.
+- Progress (medals, high scores, settings, per player) is stored in the browser on the phone. It survives updates, but uninstalling the app or clearing Chrome's site data deletes it.
+
+## Updating the installed app
+
+Nothing needs to be reinstalled. Commit and `git push`; GitHub Pages publishes the new version within a minute or two. The installed app checks for a new version every time it is started or brought back to the foreground (while online). When it finds one, a **"New version – tap to update"** bar appears at the top of the menu; tap it to switch to the new version. The bar never shows in the middle of a game. To check right away, switch to another app and back.
+
+When adding, renaming or removing a file, update `FILES` in `sw.js` and bump its `CACHE` version (see CLAUDE.md); a changed `sw.js` also shows the update bar.
 
 ## Publish with GitHub Pages
 
