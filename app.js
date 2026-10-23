@@ -165,7 +165,7 @@ function renderScoreList(list, mode, highlight) {
   scores[mode].slice(0, SHOWN_SCORES).forEach(score => {
     const item = document.createElement('li');
     if (score === highlight) item.className = 'highlight';
-    item.textContent = `${describeScore(mode, score)} · ${t('tablesShort')} ${formatTables(score.tables)}`;
+    item.textContent = `${describeScore(mode, score)} – ${t('tablesShort')} ${formatTables(score.tables)}`;
     list.append(item);
   });
 }
@@ -217,7 +217,7 @@ function nextQuestion() {
 
 function renderPlay() {
   const { mode, question } = game;
-  $('question').textContent = `${question.a} × ${question.b}`;
+  $('question').textContent = `${question.a} ${t('times')} ${question.b}`;
   $('answer').textContent = game.input || ' ';
   $('answer').classList.toggle('correcting', game.correcting);
   $('feedback').textContent = game.feedback ? game.feedback.map(([key, arg]) => t(key, arg)).join(' ') : '';
@@ -328,7 +328,7 @@ function finishGame() {
     for (const m of game.mistakes) {
       const item = document.createElement('li');
       const given = m.given === null ? t('noAnswer') : `${t('youAnswered')} ${m.given}`;
-      item.textContent = `${m.a} × ${m.b} = ${m.answer} (${given})`;
+      item.textContent = `${m.a} ${t('times')} ${m.b} = ${m.answer} (${given})`;
       list.append(item);
     }
     mistakes.append(heading, list);

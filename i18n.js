@@ -1,6 +1,7 @@
 const STRINGS = {
   en: {
     title: 'Times tables',
+    times: '×',
     tables: 'Tables',
     include1112: 'Include 11 and 12',
     selectOne: 'Select at least one table.',
@@ -20,7 +21,7 @@ const STRINGS = {
     correct: 'Correct!',
     finished: 'Finished!',
     finishedIn: time => `Time: ${time}`,
-    correctOf: (n, total, time) => `${n} of ${total} correct · ${time}`,
+    correctOf: (n, total, time) => `${n} of ${total} correct – ${time}`,
     newRecord: 'New high score!',
     rank: n => `Place ${n} on the high score list`,
     mistakes: 'Mistakes',
@@ -34,6 +35,7 @@ const STRINGS = {
   },
   no: {
     title: 'Gangetabellen',
+    times: '·',
     tables: 'Tabeller',
     include1112: 'Ta med 11 og 12',
     selectOne: 'Velg minst én tabell.',
@@ -53,7 +55,7 @@ const STRINGS = {
     correct: 'Riktig!',
     finished: 'Ferdig!',
     finishedIn: time => `Tid: ${time}`,
-    correctOf: (n, total, time) => `${n} av ${total} riktige · ${time}`,
+    correctOf: (n, total, time) => `${n} av ${total} riktige – ${time}`,
     newRecord: 'Ny rekord!',
     rank: n => `Plass ${n} på rekordlista`,
     mistakes: 'Feil',
