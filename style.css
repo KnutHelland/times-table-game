@@ -28,6 +28,8 @@
 
 * { box-sizing: border-box; }
 
+html { overscroll-behavior-y: none; } /* no pull-to-refresh, which makes the installed app feel like a web page */
+
 body {
   margin: 0;
   background: var(--bg);
