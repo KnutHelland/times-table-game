@@ -435,13 +435,26 @@ $('close-settings').addEventListener('click', toMenu);
 
 $('quit').addEventListener('click', toMenu);
 $('open-profiles').addEventListener('click', () => showProfiles());
-$('update-banner').addEventListener('click', () => location.reload());
+const RELOADED_FOR_UPDATE_KEY = 'ttg.reloadedForUpdate';
+$('update-banner').addEventListener('click', () => {
+  try { sessionStorage.setItem(RELOADED_FOR_UPDATE_KEY, '1'); } catch {}
+  location.reload();
+});
 
 if (!activeProfile()) profiles.active = null;
 buildCourse(settings.include1112);
 renderStatic();
-if (profiles.active) toMenu();
-else showProfiles();
+// The installed app is often shared by a family, so it asks who is playing every time it starts (but not after
+// reloading for an update). In a browser tab the last player just continues.
+const installedApp = !matchMedia('(display-mode: browser)').matches;
+let reloadedForUpdate = false;
+try {
+  reloadedForUpdate = sessionStorage.getItem(RELOADED_FOR_UPDATE_KEY) === '1';
+  sessionStorage.removeItem(RELOADED_FOR_UPDATE_KEY);
+} catch {}
+const askWhoIsPlaying = installedApp && !reloadedForUpdate;
+if (profiles.active && !askWhoIsPlaying) toMenu();
+else showProfiles('forward', false);
 
 // offline support and home screen install; service workers only work over http(s), not from disk
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

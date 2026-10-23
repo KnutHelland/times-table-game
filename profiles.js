@@ -7,12 +7,13 @@ function avatarImage(avatar, className) {
   return image;
 }
 
-function showProfiles(direction = 'forward') {
+// canGoBack is false when the app starts here, so there is no screen to go back to
+function showProfiles(direction = 'forward', canGoBack = true) {
   if (profiles.list.length === 0) return showNewProfile();
   show('profiles', () => {
     const container = $('profiles');
     container.replaceChildren();
-    if (activeProfile()) {
+    if (canGoBack && activeProfile()) {
       const back = el('button', 'link', t('back'));
       back.addEventListener('click', toMenu);
       container.append(back);
