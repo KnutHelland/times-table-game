@@ -18,14 +18,17 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  event.respondWith(caches.open(CACHE).then(async cache => {
+  const response = caches.open(CACHE).then(async cache => {
     const cached = await cache.match(event.request, { ignoreSearch: true });
     const refresh = fetch(event.request)
-      .then(response => {
-        if (response.ok) cache.put(event.request, response.clone());
-        return response;
+      .then(async fresh => {
+        if (fresh.ok) await cache.put(event.request, fresh.clone());
+        return fresh;
       })
       .catch(() => cached);
+    // keep the worker alive until the cache is updated, also when the cached copy was returned at once
+    event.waitUntil(refresh);
     return cached ?? refresh;
-  }));
+  });
+  event.respondWith(response);
 });
