@@ -20,9 +20,12 @@ const progress = load(PROGRESS_KEY, {}); // level id -> { medal }
 let runner = null;
 let renderScreen = null; // redraws the visible screen, e.g. after a language switch
 
-function show(screen, render) {
+// direction picks the transition: 'forward' slides the screen in from the right, 'back' from the left
+function show(screen, render, direction = 'forward') {
   for (const id of ['menu', 'settings', 'intro', 'play', 'result']) $(id).hidden = id !== screen;
   $('open-settings').hidden = screen === 'play' || screen === 'settings';
+  $(screen).classList.remove('enter-forward', 'enter-back');
+  flash($(screen), `enter-${direction}`);
   renderScreen = render;
   render?.();
   window.scrollTo(0, 0);
@@ -345,7 +348,7 @@ function renderFreeResult(modeId, tables, result, score, rank) {
 function toMenu() {
   runner?.stop();
   runner = null;
-  show('menu', renderMenu);
+  show('menu', renderMenu, 'back');
 }
 
 // --- wiring ---

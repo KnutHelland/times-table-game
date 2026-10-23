@@ -13,6 +13,7 @@ This file is the complete specification of the game. It is written so that it ca
 
 - Very simple, calm UI with no flashy elements that take attention away from the questions.
 - Right answer: a brief green flash behind the question and a short rising two-tone sound. Wrong answer: a brief red flash, a small shake and a low tone. Earning a medal (or a free play high score) plays a short four-note fanfare. All sounds are generated with the Web Audio API (no audio files).
+- Screen changes use a short CSS transition (0.25 s fade plus a 24 px slide): moving forward (into settings, a level intro, a game, a result) slides the new screen in from the right; going back to the menu slides it in from the left. No transition when the system asks for reduced motion.
 - Medals are shown as small filled circles in bronze, silver and gold; an empty grey ring means no medal.
 
 ## Languages
