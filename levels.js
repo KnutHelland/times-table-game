@@ -49,86 +49,86 @@ function buildCourse(with1112) {
   const upTo = with1112 ? '12' : '10';
 
   const units = [
-    { title: { en: 'The 2 table', no: '2-gangen' }, levels: [
+    { title: ['unit_2'], levels: [
       quiz('choice', T(2), 'intro'),
       quiz('trueFalse', T(2), 'intro', { count: 12 }),
       quiz('type', T(2), 'intro'),
       match(T(2), 'intro'),
     ] },
-    { title: { en: 'The 10 and 5 tables', no: '10- og 5-gangen' }, levels: [
+    { title: ['unit_10and5'], levels: [
       quiz('choice', T(10), 'intro'),
       quiz('type', T(10), 'intro'),
       quiz('choice', T(5), 'intro'),
       quiz('type', T(5), 'intro'),
       balloons(T(2, 5, 10), 9, [5, 10, 15], 3),
     ] },
-    { title: { en: 'The 1 table and a review', no: '1-gangen og repetisjon' }, levels: [
+    { title: ['unit_1'], levels: [
       quiz('trueFalse', T(1, 10), 'intro', { count: 12 }),
       quiz('pickQuestion', T(2, 5, 10), 'practice'),
       quiz('type', EASY, 'review'),
     ] },
-    { title: { en: 'Square numbers', no: 'Kvadrattall' }, levels: [
+    { title: ['unit_squares'], levels: [
       quiz('choice', SQUARES, 'intro'),
       match(SQUARES, 'intro'),
       quiz('type', SQUARES, 'practice'),
     ] },
-    { title: { en: 'The 4 table: double the 2s', no: '4-gangen: dobbelt av 2-gangen' }, levels: [
+    { title: ['unit_4'], levels: [
       quiz('choice', T(4), 'intro'),
       quiz('type', T(4), 'intro'),
       quiz('missing', T(2, 4), 'practice'),
       balloons(T(2, 4, 5, 10), 8, [6, 12, 18]),
     ] },
-    { title: { en: 'The 3 table', no: '3-gangen' }, levels: [
+    { title: ['unit_3'], levels: [
       quiz('choice', T(3), 'intro'),
       quiz('trueFalse', T(3), 'intro', { count: 12 }),
       quiz('type', T(3), 'intro'),
       match(T(3, 4), 'practice'),
     ] },
-    { title: { en: 'The 9 table: 10 times minus once', no: '9-gangen: ti ganger minus én gang' }, levels: [
+    { title: ['unit_9'], levels: [
       quiz('choice', T(9), 'intro'),
       quiz('pickQuestion', T(9), 'practice'),
       quiz('type', T(9), 'intro'),
       quiz('missing', T(3, 9), 'practice'),
     ] },
-    with1112 && { title: { en: 'The 11 table: the digit doubles', no: '11-gangen: like sifre' }, levels: [
+    with1112 && { title: ['unit_11'], levels: [
       quiz('choice', T(11), 'intro'),
       quiz('trueFalse', T(11), 'intro', { count: 12 }),
       quiz('type', T(11), 'intro'),
       match(T(10, 11), 'practice'),
     ] },
-    { title: with1112 ? { en: 'Review: 1–5, 9, 10 and 11', no: 'Repetisjon: 1–5, 9, 10 og 11' } : { en: 'Review: 1–5, 9 and 10', no: 'Repetisjon: 1–5, 9 og 10' }, levels: [
+    { title: ['unit_review', with1112], levels: [
       quiz('type', FIRST_HALF, 'review', { count: 20, timeLimit: 6 }),
       balloons(FIRST_HALF, 7, [8, 15, 22]),
       streak(FIRST_HALF, 10, 6, [60, 35, 20]),
     ] },
-    { title: { en: 'The 6 table: double the 3s', no: '6-gangen: dobbelt av 3-gangen' }, levels: [
+    { title: ['unit_6'], levels: [
       quiz('choice', T(6), 'intro'),
       quiz('type', T(6), 'intro'),
       match(T(3, 6), 'practice'),
     ] },
-    with1112 && { title: { en: 'The 12 table: double the 6s', no: '12-gangen: dobbelt av 6-gangen' }, levels: [
+    with1112 && { title: ['unit_12'], levels: [
       quiz('choice', T(12), 'intro'),
       quiz('type', T(12), 'intro'),
       quiz('missing', T(6, 12), 'practice'),
     ] },
-    { title: { en: 'The 8 table: double the 4s', no: '8-gangen: dobbelt av 4-gangen' }, levels: [
+    { title: ['unit_8'], levels: [
       quiz('choice', T(8), 'intro'),
       quiz('trueFalse', T(4, 8), 'practice'),
       quiz('type', T(8), 'intro'),
     ] },
-    { title: { en: 'The 7 table', no: '7-gangen' }, levels: [
+    { title: ['unit_7'], levels: [
       quiz('choice', T(7), 'intro'),
       quiz('type', T(7), 'intro'),
       quiz('pickQuestion', T(6, 7, 8), 'practice'),
       quiz('missing', T(6, 7, 8), 'practice'),
     ] },
-    { title: { en: 'The tricky ones: 6–9 times 6–9', no: 'De vanskelige: 6–9 ganger 6–9' }, levels: [
+    { title: ['unit_tricky'], levels: [
       match(TRICKY, 'practice'),
       quiz('choice', TRICKY, 'review', { timeLimit: 5 }),
       quiz('type', TRICKY, 'review', { timeLimit: 5 }),
       balloons(TRICKY, 6, [8, 16, 24]),
     ] },
-    { title: { en: `Mastery: 1–${upTo}`, no: `Mester: 1–${upTo}` }, levels: [
+    { title: ['unit_mastery', upTo], levels: [
       quiz('trueFalse', ALL, 'master', { timeLimit: 3 }),
       quiz('choice', ALL, 'master', { timeLimit: 4 }),
       quiz('missing', ALL, 'master', { timeLimit: 6 }),

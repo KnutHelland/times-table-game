@@ -70,7 +70,7 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 button.big { width: 100%; padding: 14px; font-size: 1.1rem; margin-top: 16px; }
 button.link { border: none; background: none; padding: 4px 0; color: var(--muted); }
 
-.lang { display: flex; gap: 6px; }
+.lang { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .icon-button { font-size: 1.3rem; line-height: 1; min-width: 44px; }
 .header-buttons { display: flex; gap: 6px; }
 

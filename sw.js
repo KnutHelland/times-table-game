@@ -1,11 +1,13 @@
 // Offline support: serve the game from the cache. When the page asks (at start and when the app comes back
 // to the foreground), download the files again and tell the page if any of them changed, so it can offer to reload.
-const CACHE = 'times-tables-v3';
+const CACHE = 'times-tables-v4';
+const LANGUAGES = ['en', 'no', 'nn', 'sv', 'da', 'de', 'fr', 'es'];
 const AVATARS = ['fox', 'cat', 'dog', 'panda', 'lion', 'unicorn', 'frog', 'owl',
   'tiger', 'koala', 'rabbit', 'bear', 'penguin', 'monkey', 'octopus', 'dragon'];
 const FILES = [
   './', 'index.html', 'style.css', 'i18n.js', 'core.js', 'levels.js', 'games.js', 'profiles.js', 'app.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png',
+  ...LANGUAGES.map(lang => `lang/${lang}.js`),
   ...AVATARS.map(avatar => `avatars/${avatar}.svg`),
 ];
 

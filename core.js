@@ -75,7 +75,7 @@ function deleteProfile(id) {
 }
 
 const defaultSettings = () => ({
-  lang: navigator.language?.match(/^(nb|nn|no)\b/) ? 'no' : 'en',
+  lang: browserLanguage(),
   tables: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   include1112: false,
   tab: 'levels',
@@ -84,7 +84,7 @@ const defaultSettings = () => ({
 const settings = { ...defaultSettings(), ...loadOwn('settings', {}) };
 
 const t = (key, ...args) => {
-  const value = STRINGS[settings.lang][key];
+  const value = (STRINGS[settings.lang] ?? STRINGS.en)[key];
   return typeof value === 'function' ? value(...args) : value;
 };
 
@@ -92,7 +92,7 @@ const t = (key, ...args) => {
 
 function formatNumber(value, decimals) {
   const text = value.toFixed(decimals);
-  return settings.lang === 'no' ? text.replace('.', ',') : text;
+  return text.replace('.', t('decimal'));
 }
 
 const formatTime = ms => `${formatNumber(ms / 1000, 1)} s`;

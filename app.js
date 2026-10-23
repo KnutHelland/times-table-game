@@ -40,7 +40,7 @@ function show(screen, render, direction = 'forward') {
 }
 
 function renderStatic() {
-  document.documentElement.lang = settings.lang === 'no' ? 'nb' : 'en';
+  document.documentElement.lang = t('htmlLang');
   document.title = t('title');
   for (const element of document.querySelectorAll('[data-i18n]')) element.textContent = t(element.dataset.i18n);
   const profile = activeProfile();
@@ -90,7 +90,7 @@ function renderLevelMap() {
   map.replaceChildren();
   const current = LEVELS.find(level => isUnlocked(level) && medalOf(level) === 0);
   UNITS.forEach((unit, unitIndex) => {
-    map.append(el('h3', 'unit-title', unit.title[settings.lang]));
+    map.append(el('h3', 'unit-title', t(...unit.title)));
     const grid = el('div', 'level-grid');
     for (const level of LEVELS.filter(l => l.unitIndex === unitIndex)) {
       const tile = el('button', `level-tile${level === current ? ' current' : ''}`);
@@ -179,7 +179,7 @@ function goalList(level, result) {
 
 function levelHeading(level) {
   const heading = el('div', 'level-heading');
-  heading.append(el('p', 'small', UNITS[level.unitIndex].title[settings.lang]),
+  heading.append(el('p', 'small', t(...UNITS[level.unitIndex].title)),
     el('h2', '', `${t('level', level.number)}: ${gameName(level)}`));
   return heading;
 }
@@ -399,7 +399,11 @@ document.addEventListener('keydown', e => {
   if (runner?.key(e)) e.preventDefault(); // also keeps Enter from clicking a focused button
 });
 
-for (const button of document.querySelectorAll('[data-lang]')) {
+for (const lang of LANGUAGES) {
+  const button = el('button', '', STRINGS[lang].languageName);
+  button.dataset.lang = lang;
+  button.lang = STRINGS[lang].htmlLang;
+  $('languages').append(button);
   button.addEventListener('click', () => {
     settings.lang = button.dataset.lang;
     saveOwn('settings', settings);

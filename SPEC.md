@@ -20,9 +20,11 @@ This file is the complete specification of the game. It is written so that it ca
 
 ## Languages
 
-- English and Norwegian (bokmål), switched on the Settings screen. The first visit picks Norwegian when the browser language is `nb`, `nn` or `no`, otherwise English. The choice is remembered.
-- The multiplication sign is `×` in English and `·` (a raised dot) in Norwegian, everywhere an expression is shown. Because of that, `·` must not be used as a separator in any game text (use `–`).
-- Decimal separator for times: `.` in English, `,` in Norwegian (`12.3 s` / `12,3 s`).
+- Eight languages, in this order on the Settings screen, each shown by its own name: English, Norsk bokmål, Norsk nynorsk, Svenska, Dansk, Deutsch, Français, Español. Every text in the game (including level unit titles) exists in all of them. The game title is "Times tables", "Gangetabellen" (bokmål, Danish), "Gongetabellen" (nynorsk), "Gångertabellen", "Einmaleins", "Tables de multiplication" and "Tablas de multiplicar".
+- The first visit picks the first of the browser's preferred languages that the game has (`nb` and `no` mean bokmål, `nn` nynorsk), otherwise English. The choice is remembered per player.
+- The multiplication sign is `·` (a raised dot, as taught in schools there) in the Norwegian, Swedish, Danish and German texts and `×` in English, French and Spanish, everywhere an expression is shown. Because of that, `·` must not be used as a separator in any game text (use `–`).
+- Decimal separator for times: `.` in English, `,` in all other languages (`12.3 s` / `12,3 s`).
+- Children are addressed informally (du / tu / tú).
 
 ## Players (profiles)
 
@@ -44,7 +46,7 @@ Two tabs, remembered between visits: **Levels** (default) and **Free play**. The
 
 A screen with a Back button and:
 
-- **Language:** English / Norsk buttons.
+- **Language:** one button per language in a two-column grid, the current one highlighted.
 - **Include the 11 and 12 tables** (checkbox, off by default), with a short explanation: when on, the 11 and 12 tables and the factors 11 and 12 are part of the levels and free play, and the levels with and without them keep separate medals. When off, 11 and 12 never appear anywhere in the game.
 
 ## Levels
