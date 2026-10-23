@@ -41,7 +41,7 @@ function showProfiles(direction = 'forward', canGoBack = true) {
 
     const add = el('button', 'big', t('newProfile'));
     add.addEventListener('click', showNewProfile);
-    container.append(list, add);
+    container.append(list, add, loadSaveCodeButton());
   }, direction);
 }
 
@@ -108,9 +108,64 @@ function showNewProfile() {
     create.addEventListener('click', submit);
 
     container.append(label, name, error, el('h3', '', t('choosePicture')), grid, create);
+    if (firstProfile) container.append(loadSaveCodeButton()); // e.g. moving a player to a new device
     update();
     if (firstRender) name.focus();
     firstRender = false;
+  });
+}
+
+function loadSaveCodeButton() {
+  const button = el('button', 'load-save', t('loadSaveCode'));
+  button.addEventListener('click', showImportProfile);
+  return button;
+}
+
+function showImportProfile() {
+  let pasted = ''; // kept when a language change draws the screen again
+
+  show('import-profile', () => {
+    const container = $('import-profile');
+    const back = el('button', 'link', t('back'));
+    back.addEventListener('click', () => showProfiles('back'));
+
+    const code = el('textarea', 'save-code');
+    code.id = 'import-code';
+    code.rows = 5;
+    code.value = pasted;
+    code.autocomplete = 'off';
+    code.spellcheck = false;
+    const label = el('label', 'field-label', t('saveCode'));
+    label.htmlFor = code.id;
+    const message = el('p', 'warning');
+    const preview = el('div', 'profile-heading');
+    const add = el('button', 'primary big', t('loadAsNewPlayer'));
+
+    let result = {};
+    const update = () => {
+      result = pasted.trim() ? readSaveCode(pasted) : {};
+      message.textContent = result.error ? t(result.error === 'tooNew' ? 'saveCodeTooNew' : 'saveCodeInvalid') : '';
+      message.hidden = !result.error;
+      preview.replaceChildren();
+      if (result.save) {
+        preview.append(avatarImage(result.save.avatar ?? AVATARS[0], 'avatar'),
+          el('strong', '', t('saveCodePreview', result.save.name, medalCount(result.save.progress))));
+      }
+      preview.hidden = !result.save;
+      add.disabled = !result.save;
+    };
+    code.addEventListener('input', () => {
+      pasted = code.value;
+      update();
+    });
+    add.addEventListener('click', () => {
+      if (result.save) switchProfile(addImportedProfile(result.save));
+    });
+
+    container.replaceChildren(back, el('h2', '', t('loadSaveCode')), el('p', 'small', t('loadSaveCodeHelp')),
+      label, code, message, preview, add);
+    update();
+    code.focus();
   });
 }
 

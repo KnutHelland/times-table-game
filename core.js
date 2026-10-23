@@ -69,6 +69,25 @@ function createProfile(name, avatar) {
   return id;
 }
 
+// a player from a save code is always added as a new player; a taken name gets a number, a used picture is swapped
+function addImportedProfile(imported) {
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  let name = imported.name;
+  for (let n = 2; profiles.list.some(profile => sameName(profile.name, name)); n++) {
+    name = `${imported.name.slice(0, MAX_NAME_LENGTH - String(n).length - 1).trimEnd()} ${n}`;
+  }
+  const usedAvatars = profiles.list.map(profile => profile.avatar);
+  const avatar = imported.avatar && !usedAvatars.includes(imported.avatar)
+    ? imported.avatar
+    : AVATARS.find(a => !usedAvatars.includes(a)) ?? AVATARS[0];
+  save(profileKey(id, 'settings'), imported.settings);
+  save(profileKey(id, 'progress'), imported.progress);
+  save(profileKey(id, 'scores'), imported.scores);
+  profiles.list.push({ id, name, avatar });
+  save(PROFILES_KEY, profiles);
+  return id;
+}
+
 function renameProfile(id, name) {
   profiles.list.find(profile => profile.id === id).name = name.trim();
   save(PROFILES_KEY, profiles);

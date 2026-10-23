@@ -28,6 +28,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; } /* also for elements whose class sets a display */
+
 html { overscroll-behavior-y: none; } /* no pull-to-refresh, which makes the installed app feel like a web page */
 
 body {
@@ -121,6 +123,24 @@ button.danger { background: var(--fail); border-color: var(--fail); color: #fff;
 .avatar-option { display: grid; place-items: center; padding: 6px; }
 .avatar-option[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 25%, var(--card)); border: 2px solid var(--accent); }
 .credits { margin-top: 24px; }
+
+/* save codes */
+
+.save-code {
+  display: block;
+  width: 100%;
+  font: 0.8rem/1.3 ui-monospace, monospace;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  word-break: break-all;
+  resize: vertical;
+}
+.copy-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.copied { color: var(--ok); font-weight: 600; }
+button.load-save { width: 100%; margin-top: 10px; }
 
 .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 

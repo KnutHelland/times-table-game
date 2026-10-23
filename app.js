@@ -24,8 +24,9 @@ let updateReady = false; // a newer version of the game has been downloaded and 
 let installPrompt = null; // the browser's install dialog, only offered where the game can be installed
 let currentScreen = null;
 
-const SCREENS = ['menu', 'settings', 'intro', 'play', 'result', 'profiles', 'new-profile', 'rename-profile', 'delete-profile'];
-const PROFILE_SCREENS = ['profiles', 'new-profile', 'rename-profile', 'delete-profile'];
+const SCREENS = ['menu', 'settings', 'intro', 'play', 'result', 'profiles', 'new-profile', 'rename-profile', 'import-profile',
+  'delete-profile'];
+const PROFILE_SCREENS = ['profiles', 'new-profile', 'rename-profile', 'import-profile', 'delete-profile'];
 const START_SCREENS = ['menu', 'profiles', 'new-profile'];
 
 function updateInstallButton() {
@@ -452,7 +453,33 @@ $('include-11-12').addEventListener('change', e => {
 $('open-settings').addEventListener('click', () => show('settings', () => {
   $('include-11-12').checked = settings.include1112;
   $('languages').replaceChildren(languagePicker());
+  renderSaveCode();
 }));
+
+// the current player's save code, to copy as a backup or to another device
+function renderSaveCode() {
+  const profile = activeProfile();
+  const code = el('textarea', 'save-code');
+  code.readOnly = true;
+  code.rows = 4;
+  code.value = makeSaveCode(profile, { settings, progress, scores });
+  code.setAttribute('aria-label', t('saveCode'));
+  code.addEventListener('focus', () => code.select());
+  const copied = el('span', 'copied', t('copied'));
+  copied.hidden = true;
+  const copy = el('button', '', t('copy'));
+  copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(code.value);
+      copied.hidden = false;
+    } catch {
+      code.focus(); // the clipboard needs https; the selected code can still be copied by hand
+    }
+  });
+  const row = el('div', 'copy-row');
+  row.append(copy, copied);
+  $('save-code').replaceChildren(el('h3', '', t('saveCode')), el('p', 'small', t('saveCodeHelp', profile.name)), code, row);
+}
 $('close-settings').addEventListener('click', toMenu);
 
 $('quit').addEventListener('click', toMenu);
