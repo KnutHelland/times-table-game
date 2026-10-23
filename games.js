@@ -450,7 +450,6 @@ function runBalloons(ctx, config) {
     if (balloon.value === question.answer) {
       playCorrect();
       score++;
-      speedFactor *= 1.02;
       remove(balloon, 'popped');
       for (const other of [...wave]) remove(other, 'cheer');
       feedbackEl.textContent = '';
@@ -461,7 +460,7 @@ function runBalloons(ctx, config) {
       playWrong();
       wrongPops++;
       mistakes.push({ a: question.a, b: question.b, answer: question.answer, given: balloon.value });
-      speedFactor = Math.min(speedFactor * 1.15, 3);
+      speedFactor *= 1.15; // only mistakes speed the game up, so a fluent player can go on forever
       remove(balloon, 'burst');
       flash(sky, 'fail');
     }

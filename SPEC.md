@@ -55,7 +55,7 @@ Every level has three goals, one per medal; the best medal whose goal is fully m
 - `maxAvg`: average seconds per answer (measured from when the question is shown to the first answer; a timeout counts as the full time limit),
 - `maxSeconds`: total time for the level,
 - `maxMistakes`: wrong attempts allowed (0 = "no mistakes"),
-- `minScore`: points (balloon game).
+- `minScore`: balloons popped before losing (balloon hunt).
 
 Only the best medal per level is stored.
 
@@ -71,7 +71,7 @@ Shows the unit and level title, the medal earned (large circle plus "Gold!" / "S
 
 ### Gameplays
 
-All gameplays show the progress bar and a label at the top and a running clock (levels with a points target show "4 of 15 points"). Quit (or Esc) returns to the menu.
+All gameplays show the progress bar and a label at the top and a running clock (balloon hunt levels show "4 of 15 balloons"). Quit (or Esc) returns to the menu.
 
 1. **Type the answer:** the question is shown large and the answer is typed on an on-screen numpad (7 8 9 / 4 5 6 / 1 2 3 / ⌫ 0 ⏎) or the keyboard (digits, Backspace, Enter), max 3 digits, submitted with Enter.
 2. **Missing number:** `4 × _ = 24` – one factor is hidden; the player types it on the numpad into the blank.
@@ -79,7 +79,7 @@ All gameplays show the progress bar and a label at the top and a running clock (
 4. **Find the question:** a number is shown, and the player picks which of four expressions gives it (keys 1–4). The wrong expressions are neighbours with a different product.
 5. **True or false:** a statement like `7 × 8 = 54` is shown (half of them true); buttons True / False (also ← / → or 1 / 2).
 6. **Match the pairs:** rounds of 5 expressions in a left column and their answers shuffled in a right column (answers are unique within a round). The player connects a pair by dragging a line from one to the other, or by tapping one and then the other. A right pair stays connected with a green line; a wrong pair flashes red and counts as a mistake. The next round starts when all pairs are connected.
-7. **Balloon pop** (multiple choice with balloons): for each question a wave of balloons (4, or 3 in the first balloon level) is let go almost at the same time (within 0.4 s), one per lane in random order, from below a sky field; the question is shown at the top. One balloon has the answer, the others plausible wrong answers. Popping the right balloon gives +1 point, pops all the other balloons of the wave in a cheerful way (they swell, brighten and fade), and the next wave follows shortly after. Wrong balloons that float out at the top cost nothing. Popping a wrong balloon bursts it, counts as a mistake and makes the balloons 15 % faster (up to 3× speed), and the player must still pop the right one. Each right pop also speeds things up by 2 %. If the right balloon floats out at the top, the game is over: it shows "The answer is 8 × 9 = 72." and ends 1.5 s later. In a level, reaching the gold score completes the level; the score decides the medal, and the result lists the mistakes. In free play it goes on until a right balloon gets away.
+7. **Balloon hunt** ("Ballongjakten" in Norwegian; multiple choice with balloons): for each question a wave of balloons (4, or 3 in the first balloon level) is let go almost at the same time (within 0.4 s), one per lane in random order, from below a sky field; the question is shown at the top. One balloon has the answer, the others plausible wrong answers. Popping the right balloon counts one balloon, pops all the other balloons of the wave in a cheerful way (they swell, brighten and fade), and the next wave follows shortly after. Wrong balloons that float out at the top cost nothing. Popping a wrong balloon bursts it, counts as a mistake and makes the balloons 15 % faster (no upper limit), and the player must still pop the right one. Only mistakes speed the game up, so it ends naturally at some point – unless the player always picks the right answer, which means they are fluent. If the right balloon floats out at the top, the game is over: it shows "The answer is 8 × 9 = 72." and ends 1.5 s later. Free play goes on until a right balloon gets away. Levels work the same way, and each medal is a number of balloons to pop before losing ("pop 15 balloons before you lose"); reaching the gold count completes the level, since there is nothing more to earn. The level result shows "Balloons popped: N" and lists the mistakes.
 8. **In a row:** the Type-the-answer gameplay where N answers must be right in a row; a mistake resets the count to 0. The total time decides the medal.
 
 In all question gameplays: after a wrong answer (or when the time limit runs out, "Time is up!") the correct answer is shown ("The answer is 56. Type it to continue." / "Pick it to continue.") and the player must give the correct answer before continuing. In the choice gameplays the right option is outlined in green and the wrong pick in red. When a level has a time limit per question, a thin bar under the question shrinks while time runs.
@@ -100,7 +100,7 @@ Match levels use seconds per pair [bronze, silver, gold] and mistakes allowed: i
 
 ### Level list
 
-The order follows a common teaching order (2, 10, 5, 1, square numbers, 4, 3, 9, then 6, 8, 7 and the hardest facts last). Each table is introduced with an easy gameplay and lots of time before it has to be typed. "T" = tables; balloon levels list the seconds a balloon takes to rise through the field at the start and the points for [bronze, silver, gold] (gold also completes the level).
+The order follows a common teaching order (2, 10, 5, 1, square numbers, 4, 3, 9, then 6, 8, 7 and the hardest facts last). Each table is introduced with an easy gameplay and lots of time before it has to be typed. "T" = tables; balloon levels list the seconds a balloon takes to rise through the field at the start and the balloons to pop for [bronze, silver, gold] (gold also completes the level).
 
 There are two courses, depending on the 11-and-12 setting (see Settings), and levels are numbered consecutively within the course:
 
@@ -144,11 +144,11 @@ All gameplays from the levels are available as one flat list of modes, each with
 3. **Exercise:** 20 questions with no time limit. Wrong answers are allowed and logged; the result screen lists them. The high score is ranked first by number of correct answers, then by speed.
 4. **Multiple choice**, 5. **True or false**, 6. **Find the question**, 7. **Missing number:** like Exercise (20 questions, no time limit, mistakes logged and listed, ranked by correct answers, then speed), but with that gameplay.
 8. **Match the pairs:** 3 rounds of 5 pairs. Ranked by fewest mistakes, then speed.
-9. **Balloon pop:** waves of 4 balloons that rise through the field in 7 s at the start; goes on until a right balloon gets away. Ranked by most points, then fewest mistakes (wrong pops plus the escaped balloon).
+9. **Balloon hunt:** waves of 4 balloons that rise through the field in 7 s at the start; goes on until a right balloon gets away. Ranked by most balloons popped, then fewest mistakes (wrong pops plus the escaped balloon).
 
 ### Result screen and high scores
 
-- Shows the mode and its score (time for the time races; correct count and time for the 20-question modes; time and mistakes for Match the pairs; points and mistakes for Balloon pop), "New high score!" when it is the best entry, or "Place N on the high score list" for places 2–5.
+- Shows the mode and its score (time for the time races; correct count and time for the 20-question modes; time and mistakes for Match the pairs; balloons popped and mistakes for Balloon hunt), "New high score!" when it is the best entry, or "Place N on the high score list" for places 2–5.
 - Buttons: Play again, Menu.
 - The high score list of the mode (top 5 shown, top 10 stored), each entry with its score and the tables it was played with ("tables 1–10", "tables 2, 5, 7"). The new entry is highlighted.
 - The free play tab shows each mode's best score on the mode button.
