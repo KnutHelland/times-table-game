@@ -159,6 +159,32 @@ function meetsGoal(goal, result) {
     && (goal.minScore === undefined || result.score >= goal.minScore);
 }
 
+// How a medal looks mid-game from the live stats a runner reports:
+// 'lost' = can no longer be reached, 'onTrack' = reached if the player keeps this pace, 'possible' = in between.
+function medalOutlook(goal, s) {
+  const checks = [];
+  if (goal.minAccuracy !== undefined && s.total) {
+    const best = (s.correct + s.total - s.answered) / s.total;
+    checks.push(best < goal.minAccuracy - 1e-9 ? 'lost' : s.answered === 0 || s.correct / s.answered >= goal.minAccuracy - 1e-9 ? 'onTrack' : 'possible');
+  }
+  if (goal.maxAvg !== undefined && s.total) {
+    const usedMs = s.answerMs + s.currentMs;
+    const timed = s.answered + (s.currentMs > 0 ? 1 : 0);
+    // even if every remaining answer were instant, the average can't get below this
+    const bestAvg = usedMs / s.total / 1000;
+    checks.push(bestAvg > goal.maxAvg ? 'lost' : timed === 0 || usedMs / timed / 1000 <= goal.maxAvg ? 'onTrack' : 'possible');
+  }
+  if (goal.maxSeconds !== undefined) {
+    const seconds = s.elapsedMs / 1000;
+    const projected = s.progress > 0 ? seconds / s.progress : seconds;
+    checks.push(seconds > goal.maxSeconds ? 'lost' : projected <= goal.maxSeconds ? 'onTrack' : 'possible');
+  }
+  if (goal.maxMistakes !== undefined) checks.push(s.wrong > goal.maxMistakes ? 'lost' : 'onTrack');
+  if (goal.minScore !== undefined) checks.push(s.score >= goal.minScore ? 'onTrack' : 'possible');
+  if (checks.includes('lost')) return 'lost';
+  return checks.every(check => check === 'onTrack') ? 'onTrack' : 'possible';
+}
+
 // 0 = no medal, 1 = bronze, 2 = silver, 3 = gold.
 function medalFor(level, result) {
   for (let medal = 3; medal >= 1; medal--) {

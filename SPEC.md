@@ -59,6 +59,16 @@ Every level has three goals, one per medal; the best medal whose goal is fully m
 
 Only the best medal per level is stored.
 
+### Medal indicator while playing
+
+During a level, three small medal circles (bronze, silver, gold) sit in the top row between Quit and the clock and update live:
+
+- **Filled:** on track – the player gets this medal if they keep the current pace.
+- **Hollow ring in the medal colour:** still within reach, but not at the current pace.
+- **Faded grey ring:** out of reach – it can no longer be earned in this attempt.
+
+Per goal field: accuracy is on track when the share right so far meets it, and out of reach when even all remaining questions right would not; average time per answer is on track when the average so far (including the time spent on the current question) meets it, and out of reach when it could not be met even if all remaining answers were instant; total time is on track when the time projected from the progress so far meets it, and out of reach once it has passed; mistakes are out of reach once too many have been made; balloons popped is on track once reached (otherwise within reach). A medal is out of reach if any of its fields is, and on track only if all are. Hovering a circle names the medal and its state. Free play has no indicator.
+
 ### Level result
 
 Shows the unit and level title, the medal earned (large circle plus "Gold!" / "Silver!" / "Bronze!" or "No medal this time"), "New personal best!" when the medal improved, "The next level is unlocked." when it just became available, the stats (quiz: right on the first try, average seconds per answer, total time; match and in-a-row: total time and mistakes; balloons: score and mistakes), the three goals with a ✓ on each one reached, the list of mistakes ("7 × 8 = 56 (you answered 54)") and buttons Next level (when unlocked), Try again and Menu.

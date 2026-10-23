@@ -104,6 +104,9 @@ const STRINGS = {
     statMistakes: n => `${n} ${n === 1 ? 'mistake' : 'mistakes'}`,
     statScore: n => `Balloons popped: ${n}`,
     locked: 'Locked: get a medal on the level before',
+    outlook_onTrack: 'on track',
+    outlook_possible: 'still within reach',
+    outlook_lost: 'out of reach',
   },
   no: {
     title: 'Gangetabellen',
@@ -210,5 +213,8 @@ const STRINGS = {
     statMistakes: n => `${n} feil`,
     statScore: n => `Ballonger skutt: ${n}`,
     locked: 'Låst: ta en medalje på nivået før',
+    outlook_onTrack: 'i rute',
+    outlook_possible: 'fortsatt mulig',
+    outlook_lost: 'ikke mulig lenger',
   },
 };

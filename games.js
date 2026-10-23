@@ -196,6 +196,16 @@ function runQuiz(ctx, config) {
     if (stopped) return;
     const now = performance.now();
     ctx.hud.clock(formatTime(now - start));
+    ctx.hud.stats({
+      total: streak ? null : count,
+      answered,
+      correct,
+      wrong: mistakes.length,
+      answerMs: answerMs.reduce((sum, ms) => sum + ms, 0),
+      currentMs: correcting ? 0 : now - questionStart,
+      elapsedMs: now - start,
+      progress: streak ? inARow / streak : answered / count,
+    });
     if (timeLimit) {
       const limit = timeLimit * 1000;
       const left = correcting ? 0 : Math.max(0, limit - (now - questionStart));
@@ -368,6 +378,7 @@ function runMatch(ctx, config) {
   function tick() {
     if (stopped) return;
     ctx.hud.clock(formatTime(performance.now() - start));
+    ctx.hud.stats({ wrong: mistakes, elapsedMs: performance.now() - start, progress: matched / total });
     requestAnimationFrame(tick);
   }
 
@@ -412,6 +423,7 @@ function runBalloons(ctx, config) {
     if (question) setText(questionEl, expression(question.a, question.b));
     ctx.hud.progress(target ? score / target : 0, target ? t('pointsOf', score, target) : t('points', score));
     ctx.hud.clock(formatTime(performance.now() - start));
+    ctx.hud.stats({ score, wrong: mistakes.length, elapsedMs: performance.now() - start });
   }
 
   // All balloons of a wave start within a few hundred milliseconds, one per lane in random order.

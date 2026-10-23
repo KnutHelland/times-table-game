@@ -194,6 +194,9 @@ function startGame(config, onFinish) {
   show('play', null);
   $('stage').className = `stage stage-${config.game}`;
   $('set-progress').style.width = '0';
+  const track = $('medal-track');
+  track.replaceChildren();
+  delete track.dataset.key;
   const ctx = {
     stage: $('stage'),
     hud: {
@@ -203,6 +206,18 @@ function startGame(config, onFinish) {
         const width = `${Math.min(1, fraction) * 100}%`;
         if ($('set-progress').style.width !== width) $('set-progress').style.width = width;
         if ($('set-label').textContent !== label) $('set-label').textContent = label;
+      },
+      stats: stats => {
+        if (!config.medals) return;
+        const outlooks = config.medals.map(goal => medalOutlook(goal, stats));
+        const key = outlooks.join();
+        if (track.dataset.key === key) return;
+        track.dataset.key = key;
+        track.replaceChildren(...outlooks.map((outlook, i) => {
+          const badge = medalBadge(i + 1, outlook);
+          badge.title = `${t(`medal${i + 1}`)}: ${t(`outlook_${outlook}`)}`;
+          return badge;
+        }));
       },
     },
     finish: result => {

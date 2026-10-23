@@ -142,6 +142,10 @@ button.link { border: none; background: none; padding: 4px 0; color: var(--muted
 
 .play-top { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
 #clock { font-variant-numeric: tabular-nums; color: var(--muted); }
+.medal-track { display: flex; gap: 6px; }
+.medal-track .medal { transition: opacity 0.3s, background-color 0.3s; }
+.medal.possible { background: transparent; }
+.medal.lost { background: transparent; border-color: var(--line); opacity: 0.5; }
 
 .bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
 .bar > div { height: 100%; width: 0; background: var(--accent); transition: width 0.2s; }
