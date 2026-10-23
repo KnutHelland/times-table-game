@@ -1,6 +1,7 @@
 STRINGS.nn = {
   languageName: 'Norsk nynorsk',
   htmlLang: 'nn',
+  flag: 'no',
   decimal: ',',
   title: 'Gongetabellen',
   times: '·',
@@ -116,6 +117,7 @@ STRINGS.nn = {
   newProfileTitle: 'Ny spelar',
   welcome: 'Velkomen!',
   welcomeHelp: 'Lag ein spelar for kvar person som spelar. Kvar spelar har eigne medaljar, rekordar og innstillingar.',
+  privacyNote: 'Ingen data blir sende eller lagra nokon annan stad: spelaren du legg til, finst berre på denne eininga, i denne nettlesaren.',
   profileName: 'Namn',
   nameTaken: 'Det finst allereie ein spelar med det namnet.',
   choosePicture: 'Vel eit bilete',

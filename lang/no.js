@@ -1,6 +1,7 @@
 STRINGS.no = {
   languageName: 'Norsk bokmål',
   htmlLang: 'nb',
+  flag: 'no',
   decimal: ',',
   title: 'Gangetabellen',
   times: '·',
@@ -116,6 +117,7 @@ STRINGS.no = {
   newProfileTitle: 'Ny spiller',
   welcome: 'Velkommen!',
   welcomeHelp: 'Lag en spiller for hver person som spiller. Hver spiller har egne medaljer, rekorder og innstillinger.',
+  privacyNote: 'Ingen data sendes eller lagres noe annet sted: spilleren du legger til, finnes bare på denne enheten, i denne nettleseren.',
   profileName: 'Navn',
   nameTaken: 'Det finnes allerede en spiller med det navnet.',
   choosePicture: 'Velg et bilde',

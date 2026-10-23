@@ -1,6 +1,7 @@
 STRINGS.de = {
   languageName: 'Deutsch',
   htmlLang: 'de',
+  flag: 'de',
   decimal: ',',
   title: 'Einmaleins',
   times: '·',
@@ -116,6 +117,7 @@ STRINGS.de = {
   newProfileTitle: 'Neuer Spieler',
   welcome: 'Willkommen!',
   welcomeHelp: 'Lege für jede Person, die spielt, einen Spieler an. Jeder Spieler hat eigene Medaillen, Bestenlisten und Einstellungen.',
+  privacyNote: 'Es werden keine Daten gesendet oder anderswo gespeichert: Den Spieler, den du anlegst, gibt es nur auf diesem Gerät, in diesem Browser.',
   profileName: 'Name',
   nameTaken: 'Es gibt schon einen Spieler mit diesem Namen.',
   choosePicture: 'Wähle ein Bild',

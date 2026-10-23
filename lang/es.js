@@ -1,6 +1,7 @@
 STRINGS.es = {
   languageName: 'Español',
   htmlLang: 'es',
+  flag: 'es',
   decimal: ',',
   title: 'Tablas de multiplicar',
   times: '×',
@@ -116,6 +117,7 @@ STRINGS.es = {
   newProfileTitle: 'Nuevo jugador',
   welcome: '¡Bienvenidos!',
   welcomeHelp: 'Crea un jugador para cada persona que juegue. Cada jugador tiene sus propias medallas, récords y ajustes.',
+  privacyNote: 'No se envía ni se guarda ningún dato en ningún otro sitio: el jugador que añades solo existe en este dispositivo, en este navegador.',
   profileName: 'Nombre',
   nameTaken: 'Ya hay un jugador con ese nombre.',
   choosePicture: 'Elige una imagen',

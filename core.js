@@ -1,4 +1,6 @@
 const PROFILES_KEY = 'ttg.profiles.v1';
+// the language last used on this device, for the screens shown before a player is chosen
+const LANGUAGE_KEY = 'ttg.language.v1';
 // saved before there were profiles; moved into the first profile that is created
 const LEGACY_KEYS = { settings: 'ttg.settings.v1', scores: 'ttg.scores.v1', progress: 'ttg.progress.v1' };
 
@@ -59,9 +61,9 @@ function createProfile(name, avatar) {
       save(profileKey(id, part), legacy);
       remove(LEGACY_KEYS[part]);
     }
-  } else {
-    save(profileKey(id, 'settings'), { lang: settings.lang });
   }
+  // the new player gets the language shown while it was created (which is what the flags on the Welcome screen pick)
+  save(profileKey(id, 'settings'), { ...load(profileKey(id, 'settings'), {}), lang: settings.lang });
   profiles.list.push({ id, name: name.trim(), avatar });
   save(PROFILES_KEY, profiles);
   return id;
@@ -75,13 +77,15 @@ function deleteProfile(id) {
 }
 
 const defaultSettings = () => ({
-  lang: browserLanguage(),
+  lang: load(LANGUAGE_KEY, null) ?? load(LEGACY_KEYS.settings, {}).lang ?? browserLanguage(),
   tables: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   include1112: false,
   tab: 'levels',
 });
 
 const settings = { ...defaultSettings(), ...loadOwn('settings', {}) };
+
+const rememberLanguage = () => save(LANGUAGE_KEY, settings.lang);
 
 const t = (key, ...args) => {
   const value = (STRINGS[settings.lang] ?? STRINGS.en)[key];

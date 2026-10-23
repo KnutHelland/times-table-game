@@ -1,6 +1,7 @@
 STRINGS.da = {
   languageName: 'Dansk',
   htmlLang: 'da',
+  flag: 'dk',
   decimal: ',',
   title: 'Gangetabellen',
   times: '·',
@@ -116,6 +117,7 @@ STRINGS.da = {
   newProfileTitle: 'Ny spiller',
   welcome: 'Velkommen!',
   welcomeHelp: 'Opret en spiller til hver person, der spiller. Hver spiller har sine egne medaljer, rekorder og indstillinger.',
+  privacyNote: 'Ingen data sendes eller gemmes andre steder: spilleren, du tilføjer, findes kun på denne enhed, i denne browser.',
   profileName: 'Navn',
   nameTaken: 'Der findes allerede en spiller med det navn.',
   choosePicture: 'Vælg et billede',

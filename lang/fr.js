@@ -1,6 +1,7 @@
 STRINGS.fr = {
   languageName: 'Français',
   htmlLang: 'fr',
+  flag: 'fr',
   decimal: ',',
   title: 'Tables de multiplication',
   times: '×',
@@ -116,6 +117,7 @@ STRINGS.fr = {
   newProfileTitle: 'Nouveau joueur',
   welcome: 'Bienvenue !',
   welcomeHelp: 'Crée un joueur pour chaque personne qui joue. Chaque joueur a ses propres médailles, records et réglages.',
+  privacyNote: 'Aucune donnée n’est envoyée ni enregistrée ailleurs : le joueur que tu crées existe seulement sur cet appareil, dans ce navigateur.',
   profileName: 'Prénom',
   nameTaken: 'Il y a déjà un joueur avec ce prénom.',
   choosePicture: 'Choisis une image',

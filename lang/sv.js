@@ -1,6 +1,7 @@
 STRINGS.sv = {
   languageName: 'Svenska',
   htmlLang: 'sv',
+  flag: 'se',
   decimal: ',',
   title: 'Gångertabellen',
   times: '·',
@@ -116,6 +117,7 @@ STRINGS.sv = {
   newProfileTitle: 'Ny spelare',
   welcome: 'Välkommen!',
   welcomeHelp: 'Skapa en spelare för varje person som spelar. Varje spelare har egna medaljer, rekord och inställningar.',
+  privacyNote: 'Inga uppgifter skickas eller sparas någon annanstans: spelaren du lägger till finns bara på den här enheten, i den här webbläsaren.',
   profileName: 'Namn',
   nameTaken: 'Det finns redan en spelare med det namnet.',
   choosePicture: 'Välj en bild',

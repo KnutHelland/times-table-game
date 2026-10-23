@@ -45,6 +45,9 @@ function showNewProfile() {
   const firstProfile = profiles.list.length === 0;
   const usedAvatars = profiles.list.map(profile => profile.avatar);
   let avatar = AVATARS.find(a => !usedAvatars.includes(a)) ?? AVATARS[0];
+  // the screen is drawn again when a flag changes the language, so the name and focus must survive that
+  let typedName = '';
+  let firstRender = true;
 
   show('new-profile', () => {
     const container = $('new-profile');
@@ -55,10 +58,13 @@ function showNewProfile() {
       container.append(back);
     }
     container.append(el('h2', '', t(firstProfile ? 'welcome' : 'newProfileTitle')));
-    if (firstProfile) container.append(el('p', 'small', t('welcomeHelp')));
+    if (firstProfile) {
+      container.append(languagePicker(), el('p', 'privacy', t('privacyNote')), el('p', 'small', t('welcomeHelp')));
+    }
 
     const name = el('input', 'text-input');
     name.id = 'profile-name';
+    name.value = typedName;
     name.maxLength = MAX_NAME_LENGTH;
     name.autocomplete = 'off';
     const label = el('label', 'field-label', t('profileName'));
@@ -90,13 +96,17 @@ function showNewProfile() {
     const submit = () => {
       if (!create.disabled) switchProfile(createProfile(name.value, avatar));
     };
-    name.addEventListener('input', update);
+    name.addEventListener('input', () => {
+      typedName = name.value;
+      update();
+    });
     name.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
     create.addEventListener('click', submit);
 
     container.append(label, name, error, el('h3', '', t('choosePicture')), grid, create);
     update();
-    name.focus();
+    if (firstRender) name.focus();
+    firstRender = false;
   });
 }
 

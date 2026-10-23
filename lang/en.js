@@ -1,6 +1,7 @@
 STRINGS.en = {
   languageName: 'English',
   htmlLang: 'en',
+  flag: 'gb',
   decimal: '.',
   title: 'Times tables',
   times: '×',
@@ -116,6 +117,7 @@ STRINGS.en = {
   newProfileTitle: 'New player',
   welcome: 'Welcome!',
   welcomeHelp: 'Make a player for each person who plays. Every player has their own medals, high scores and settings.',
+  privacyNote: 'No data is sent or stored anywhere else: the player you add exists only on this device, in this browser.',
   profileName: 'Name',
   nameTaken: 'There is already a player with that name.',
   choosePicture: 'Choose a picture',

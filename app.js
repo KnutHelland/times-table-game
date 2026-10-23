@@ -49,9 +49,33 @@ function renderStatic() {
     $('open-profiles').setAttribute('aria-label', t('profileButton', profile.name));
     $('open-profiles').title = profile.name;
   }
-  for (const button of document.querySelectorAll('[data-lang]')) {
-    button.setAttribute('aria-pressed', button.dataset.lang === settings.lang);
+}
+
+function setLanguage(lang) {
+  settings.lang = lang;
+  saveOwn('settings', settings);
+  rememberLanguage();
+  renderStatic();
+  renderScreen?.();
+}
+
+// a flag and the language's own name per language; used on the Welcome and Settings screens
+function languagePicker() {
+  const picker = el('div', 'lang');
+  picker.setAttribute('role', 'group');
+  for (const lang of LANGUAGES) {
+    const button = el('button', 'lang-option');
+    button.dataset.lang = lang;
+    button.lang = STRINGS[lang].htmlLang;
+    button.setAttribute('aria-pressed', lang === settings.lang);
+    const flag = el('img', 'flag');
+    flag.src = `flags/${STRINGS[lang].flag}.svg`;
+    flag.alt = '';
+    button.append(flag, el('span', '', STRINGS[lang].languageName));
+    button.addEventListener('click', () => setLanguage(lang));
+    picker.append(button);
   }
+  return picker;
 }
 
 function medalBadge(medal, className = '') {
@@ -386,6 +410,7 @@ function switchProfile(id) {
   replaceContents(settings, { ...defaultSettings(), ...loadOwn('settings', {}) });
   replaceContents(scores, { ...emptyScores(), ...loadOwn('scores', {}) });
   replaceContents(progress, loadOwn('progress', {}));
+  rememberLanguage();
   buildCourse(settings.include1112);
   renderStatic();
   toMenu();
@@ -398,19 +423,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') return toMenu();
   if (runner?.key(e)) e.preventDefault(); // also keeps Enter from clicking a focused button
 });
-
-for (const lang of LANGUAGES) {
-  const button = el('button', '', STRINGS[lang].languageName);
-  button.dataset.lang = lang;
-  button.lang = STRINGS[lang].htmlLang;
-  $('languages').append(button);
-  button.addEventListener('click', () => {
-    settings.lang = button.dataset.lang;
-    saveOwn('settings', settings);
-    renderStatic();
-    renderScreen?.();
-  });
-}
 
 for (const button of document.querySelectorAll('[data-tab]')) {
   button.addEventListener('click', () => {
@@ -430,6 +442,7 @@ $('include-11-12').addEventListener('change', e => {
 
 $('open-settings').addEventListener('click', () => show('settings', () => {
   $('include-11-12').checked = settings.include1112;
+  $('languages').replaceChildren(languagePicker());
 }));
 $('close-settings').addEventListener('click', toMenu);
 
