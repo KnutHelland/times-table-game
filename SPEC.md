@@ -70,7 +70,7 @@ Shows the unit and level title, the medal earned (large circle plus "Gold!" / "S
 
 ### Gameplays
 
-All gameplays show the progress bar and a label at the top and a running clock (the balloon game shows the seconds left). Quit (or Esc) returns to the menu.
+All gameplays show the progress bar and a label at the top and a running clock (levels with a points target show "4 of 15 points"). Quit (or Esc) returns to the menu.
 
 1. **Type the answer:** the question is shown large and the answer is typed on an on-screen numpad (7 8 9 / 4 5 6 / 1 2 3 / ⌫ 0 ⏎) or the keyboard (digits, Backspace, Enter), max 3 digits, submitted with Enter.
 2. **Missing number:** `4 × _ = 24` – one factor is hidden; the player types it on the numpad into the blank.
@@ -78,7 +78,7 @@ All gameplays show the progress bar and a label at the top and a running clock (
 4. **Find the question:** a number is shown, and the player picks which of four expressions gives it (keys 1–4). The wrong expressions are neighbours with a different product.
 5. **True or false:** a statement like `7 × 8 = 54` is shown (half of them true); buttons True / False (also ← / → or 1 / 2).
 6. **Match the pairs:** rounds of 5 expressions in a left column and their answers shuffled in a right column (answers are unique within a round). The player connects a pair by dragging a line from one to the other, or by tapping one and then the other. A right pair stays connected with a green line; a wrong pair flashes red and counts as a mistake. The next round starts when all pairs are connected.
-7. **Balloon pop:** balloons with numbers float up through a sky field; the question is shown at the top. The player pops the balloon with the answer: +1 point and a new question. Popping a wrong balloon makes all balloons 20 % faster (up to 3× speed). If the balloon with the current answer flies out at the top, the player loses a point and gets a new question. A balloon with the current answer is always on its way; the others are decoys, and some decoys carry the next question's answer so it is often already in the air. Each correct pop also speeds things up by 3 %. The game lasts a fixed number of seconds; the score decides the medal.
+7. **Balloon pop** (multiple choice with balloons): for each question a wave of balloons (4, or 3 in the first balloon level) is let go almost at the same time (within 0.4 s), one per lane in random order, from below a sky field; the question is shown at the top. One balloon has the answer, the others plausible wrong answers. Popping the right balloon gives +1 point, pops all the other balloons of the wave in a cheerful way (they swell, brighten and fade), and the next wave follows shortly after. Wrong balloons that float out at the top cost nothing. Popping a wrong balloon bursts it, counts as a mistake and makes the balloons 15 % faster (up to 3× speed), and the player must still pop the right one. Each right pop also speeds things up by 2 %. If the right balloon floats out at the top, the game is over: it shows "The answer is 8 × 9 = 72." and ends 1.5 s later. In a level, reaching the gold score completes the level; the score decides the medal, and the result lists the mistakes. In free play it goes on until a right balloon gets away.
 8. **In a row:** the Type-the-answer gameplay where N answers must be right in a row; a mistake resets the count to 0. The total time decides the medal.
 
 In all question gameplays: after a wrong answer (or when the time limit runs out, "Time is up!") the correct answer is shown ("The answer is 56. Type it to continue." / "Pick it to continue.") and the player must give the correct answer before continuing. In the choice gameplays the right option is outlined in green and the wrong pick in red. When a level has a time limit per question, a thin bar under the question shrinks while time runs.
@@ -99,7 +99,7 @@ Match levels use seconds per pair [bronze, silver, gold] and mistakes allowed: i
 
 ### Level list
 
-The order follows a common teaching order (2, 10, 5, 1, square numbers, 4, 3, 9, then 6, 8, 7 and the hardest facts last). Each table is introduced with an easy gameplay and lots of time before it has to be typed. "T" = tables; balloon levels list duration, the seconds a balloon takes to rise through the field, and the points for [bronze, silver, gold].
+The order follows a common teaching order (2, 10, 5, 1, square numbers, 4, 3, 9, then 6, 8, 7 and the hardest facts last). Each table is introduced with an easy gameplay and lots of time before it has to be typed. "T" = tables; balloon levels list the seconds a balloon takes to rise through the field at the start and the points for [bronze, silver, gold] (gold also completes the level).
 
 There are two courses, depending on the 11-and-12 setting (see Settings), and levels are numbered consecutively within the course:
 
@@ -107,20 +107,20 @@ There are two courses, depending on the 11-and-12 setting (see Settings), and le
 - **With 11 and 12** (59 levels): every table goes up to 12 times, the square numbers go up to 12 × 12, and the 11 and 12 tables are introduced along the way: 11 right after the 9s (its pattern is easy), 12 right after the 6s (double the 6s). The review and mastery units include them. The two courses keep separate medals.
 
 1. **The 2 table:** choice T2 intro; true/false T2 intro (12 questions); type T2 intro; match T2 intro (2 rounds)
-2. **The 10 and 5 tables:** choice T10 intro; type T10 intro; choice T5 intro; type T5 intro; balloons T2, 5, 10 (45 s, rise 9 s, [5, 10, 15])
+2. **The 10 and 5 tables:** choice T10 intro; type T10 intro; choice T5 intro; type T5 intro; balloons T2, 5, 10 (3 balloons per wave, rise 9 s, [5, 10, 15])
 3. **The 1 table and a review:** true/false T1, 10 intro (12 questions); find the question T2, 5, 10 practice; type T1, 2, 5, 10 review
 4. **Square numbers:** choice intro; match intro; type practice
-5. **The 4 table: double the 2s:** choice T4 intro; type T4 intro; missing T2, 4 practice; balloons T2, 4, 5, 10 (45 s, rise 8 s, [6, 12, 18])
+5. **The 4 table: double the 2s:** choice T4 intro; type T4 intro; missing T2, 4 practice; balloons T2, 4, 5, 10 (rise 8 s, [6, 12, 18])
 6. **The 3 table:** choice T3 intro; true/false T3 intro (12); type T3 intro; match T3, 4 practice
 7. **The 9 table: 10 times minus once:** choice T9 intro; find the question T9 practice; type T9 intro; missing T3, 9 practice
 8. **The 11 table: the digit doubles** (with 11 and 12 only): choice T11 intro; true/false T11 intro (12); type T11 intro; match T10, 11 practice
-9. **Review: 1–5, 9 and 10** (plus 11 when included): type review (20 questions, 6 s limit); balloons (60 s, rise 7 s, [8, 15, 22]); in a row 10 (6 s limit; [60, 35, 20] s total)
+9. **Review: 1–5, 9 and 10** (plus 11 when included): type review (20 questions, 6 s limit); balloons (rise 7 s, [8, 15, 22]); in a row 10 (6 s limit; [60, 35, 20] s total)
 10. **The 6 table: double the 3s:** choice T6 intro; type T6 intro; match T3, 6 practice
 11. **The 12 table: double the 6s** (with 11 and 12 only): choice T12 intro; type T12 intro; missing T6, 12 practice
 12. **The 8 table: double the 4s:** choice T8 intro; true/false T4, 8 practice; type T8 intro
 13. **The 7 table:** choice T7 intro; type T7 intro; find the question T6, 7, 8 practice; missing T6, 7, 8 practice
-14. **The tricky ones: 6–9 times 6–9:** match practice; choice review (5 s limit); type review (5 s limit); balloons (60 s, rise 6 s, [8, 16, 24])
-15. **Mastery: 1–10** (1–12 with 11 and 12): true/false master (3 s limit); choice master (4 s limit); missing master (6 s limit); match master (4 rounds); balloons (60 s, rise 5 s, [10, 18, 26]); type master; in a row 20 (4 s limit; [80, 50, 30] s total); type final (with 11 and 12, gold needs ≤ 1.2 s per answer instead of 1.1 s)
+14. **The tricky ones: 6–9 times 6–9:** match practice; choice review (5 s limit); type review (5 s limit); balloons (rise 6 s, [8, 16, 24])
+15. **Mastery: 1–10** (1–12 with 11 and 12): true/false master (3 s limit); choice master (4 s limit); missing master (6 s limit); match master (4 rounds); balloons (rise 5 s, [10, 18, 26]); type master; in a row 20 (4 s limit; [80, 50, 30] s total); type final (with 11 and 12, gold needs ≤ 1.2 s per answer instead of 1.1 s)
 
 ## Free play
 
@@ -143,7 +143,7 @@ All gameplays from the levels are available as one flat list of modes, each with
 3. **Exercise:** 20 questions with no time limit. Wrong answers are allowed and logged; the result screen lists them. The high score is ranked first by number of correct answers, then by speed.
 4. **Multiple choice**, 5. **True or false**, 6. **Find the question**, 7. **Missing number:** like Exercise (20 questions, no time limit, mistakes logged and listed, ranked by correct answers, then speed), but with that gameplay.
 8. **Match the pairs:** 3 rounds of 5 pairs. Ranked by fewest mistakes, then speed.
-9. **Balloon pop:** 60 seconds, balloons rise through the field in 7 s at the start. Ranked by most points, then fewest mistakes (wrong pops plus escaped answer balloons).
+9. **Balloon pop:** waves of 4 balloons that rise through the field in 7 s at the start; goes on until a right balloon gets away. Ranked by most points, then fewest mistakes (wrong pops plus the escaped balloon).
 
 ### Result screen and high scores
 

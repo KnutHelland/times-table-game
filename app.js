@@ -9,7 +9,7 @@ const FREE_MODES = {
   pickQuestion: { game: 'pickQuestion', count: 20, ranking: 'correct', name: 'game_pickQuestion', desc: 'exerciseDesc' },
   missing: { game: 'missing', count: 20, ranking: 'correct', name: 'game_missing', desc: 'exerciseDesc' },
   match: { game: 'match', rounds: 3, pairs: 5, ranking: 'mistakes', name: 'game_match', desc: 'freeMatchDesc' },
-  balloons: { game: 'balloons', seconds: 60, rise: 7, ranking: 'score', name: 'game_balloons', desc: 'freeBalloonsDesc' },
+  balloons: { game: 'balloons', rise: 7, count: 4, ranking: 'score', name: 'game_balloons', desc: 'freeBalloonsDesc' },
 };
 const MAX_SCORES = 10;
 const SHOWN_SCORES = 5;
@@ -130,7 +130,7 @@ function factsText(source) {
 function detailsText(level) {
   const parts = [];
   if (level.game === 'match') parts.push(t('rounds', level.rounds, level.pairs));
-  else if (level.game === 'balloons') parts.push(t('duration', formatSeconds(level.seconds)));
+  else if (level.game === 'balloons') parts.push(t('balloonWave', level.count), t('balloonTarget', level.target));
   else if (!level.streak) parts.push(t('questions', level.count));
   if (level.timeLimit) parts.push(t('timeLimit', formatSeconds(level.timeLimit)));
   return parts.join(', ');

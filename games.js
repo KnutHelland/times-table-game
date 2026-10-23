@@ -389,132 +389,133 @@ function runMatch(ctx, config) {
   };
 }
 
-// --- balloons: pop the balloon carrying the answer before it flies away ---
+// --- balloons: a multiple-choice wave of balloons per question; pop the right one before it flies away ---
 
 const BALLOON_COLORS = ['#e8a0a0', '#9ec5e8', '#a8d8a8', '#e8d49a', '#c8a8e0', '#f0b890'];
 
 function runBalloons(ctx, config) {
-  const { deck, seconds, rise, count = 4 } = config;
+  const { deck, rise, count = 4, target } = config;
   const start = performance.now();
-  let score = 0, pops = 0, wrongPops = 0, escapes = 0;
-  let speedFactor = 1, activeMs = 0, sinceSpawn = Infinity, last = performance.now();
-  let balloons = [], question = deck.next(), upcoming = deck.next();
+  const mistakes = [];
+  let score = 0, wrongPops = 0, speedFactor = 1, last = performance.now();
+  let question = null, wave = [], waveStart = 0, lost = false;
   let stopped = false;
 
   const sky = el('div', 'sky');
   const questionEl = el('div', 'sky-question');
+  const feedbackEl = el('p', 'feedback');
   sky.append(questionEl);
-  ctx.stage.replaceChildren(el('p', 'prompt'), sky);
+  ctx.stage.replaceChildren(el('p', 'prompt'), sky, feedbackEl);
 
   function render() {
     setText(ctx.stage.querySelector('.prompt'), t('prompt_balloons'));
-    setText(questionEl, expression(question.a, question.b));
-    ctx.hud.progress(activeMs / (seconds * 1000), t('points', score));
-    ctx.hud.clock(formatSeconds(Math.max(0, Math.ceil(seconds - activeMs / 1000))));
+    if (question) setText(questionEl, expression(question.a, question.b));
+    ctx.hud.progress(target ? score / target : 0, target ? t('pointsOf', score, target) : t('points', score));
+    ctx.hud.clock(formatTime(performance.now() - start));
   }
 
-  function spawn(value) {
-    const lanes = count + 1;
+  // All balloons of a wave start within a few hundred milliseconds, one per lane in random order.
+  function releaseWave() {
+    question = deck.next();
+    const values = shuffle([question.answer, ...wrongAnswers(question, count - 1)]);
+    const lanes = shuffle(range(0, count - 1));
     const width = sky.clientWidth;
-    const busy = balloons.filter(b => b.y < 120).map(b => b.lane);
-    const free = range(0, lanes - 1).filter(lane => !busy.includes(lane));
-    const lane = randomItem(free.length ? free : range(0, lanes - 1));
-    const balloon = { value, lane, y: -70, el: el('button', 'balloon', value) };
-    balloon.el.style.left = `${((lane + 0.5) / lanes) * width - 32}px`;
-    balloon.el.style.background = randomItem(BALLOON_COLORS);
-    balloon.el.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      hit(balloon);
+    wave = values.map((value, i) => {
+      const balloon = { value, delay: Math.random() * 400, y: -80, el: el('button', 'balloon', value) };
+      balloon.el.style.left = `${((lanes[i] + 0.5) / count) * width - 32}px`;
+      balloon.el.style.background = randomItem(BALLOON_COLORS);
+      balloon.el.style.transform = 'translateY(80px)';
+      balloon.el.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        hit(balloon);
+      });
+      sky.append(balloon.el);
+      return balloon;
     });
-    sky.append(balloon.el);
-    balloons.push(balloon);
-    sinceSpawn = 0;
+    waveStart = 0;
+    flash(questionEl, 'ok');
+    render();
   }
 
   function remove(balloon, className) {
-    balloons = balloons.filter(b => b !== balloon);
+    wave = wave.filter(b => b !== balloon);
+    balloon.el.style.pointerEvents = 'none';
     if (!className) return balloon.el.remove();
     balloon.el.classList.add(className);
-    balloon.el.style.pointerEvents = 'none';
-    setTimeout(() => balloon.el.remove(), 300);
-  }
-
-  function nextQuestion() {
-    question = upcoming;
-    upcoming = deck.next();
-  }
-
-  // Some decoys carry the next question's answer, so it is often already in the air when the question changes.
-  function decoy() {
-    if (upcoming.answer !== question.answer && Math.random() < 0.4) return upcoming.answer;
-    return randomItem(wrongAnswers(question, 3));
+    setTimeout(() => balloon.el.remove(), 500);
   }
 
   function hit(balloon) {
-    if (stopped || !balloons.includes(balloon)) return;
+    if (stopped || lost || !wave.includes(balloon)) return;
     if (balloon.value === question.answer) {
       playCorrect();
       score++;
-      pops++;
-      speedFactor *= 1.03;
+      speedFactor *= 1.02;
       remove(balloon, 'popped');
-      nextQuestion();
-      flash(questionEl, 'ok');
+      for (const other of [...wave]) remove(other, 'cheer');
+      feedbackEl.textContent = '';
+      render();
+      if (target && score >= target) return setTimeout(finish, 500);
+      setTimeout(() => !stopped && releaseWave(), 450);
     } else {
       playWrong();
       wrongPops++;
-      speedFactor = Math.min(speedFactor * 1.2, 3);
+      mistakes.push({ a: question.a, b: question.b, answer: question.answer, given: balloon.value });
+      speedFactor = Math.min(speedFactor * 1.15, 3);
       remove(balloon, 'burst');
       flash(sky, 'fail');
     }
-    render();
+  }
+
+  function loseWave() {
+    lost = true;
+    playWrong();
+    flash(sky, 'fail');
+    mistakes.push({ a: question.a, b: question.b, answer: question.answer, given: null });
+    feedbackEl.textContent = t('theAnswerIs', `${expression(question.a, question.b)} = ${question.answer}`);
+    for (const balloon of [...wave]) remove(balloon, 'burst');
+    setTimeout(finish, 1500);
   }
 
   function loop(now) {
     if (stopped) return;
     const dt = Math.min(now - last, 100); // a hidden tab pauses the game instead of jumping ahead
     last = now;
-    activeMs += dt;
-    sinceSpawn += dt;
-    if (activeMs >= seconds * 1000) return finish();
-
-    const speed = (sky.clientHeight / rise) * speedFactor;
-    for (const balloon of [...balloons]) {
-      balloon.y += (speed * dt) / 1000;
-      balloon.el.style.transform = `translateY(${-balloon.y}px)`;
-      if (balloon.y > sky.clientHeight) {
-        remove(balloon);
-        if (balloon.value === question.answer) {
-          playWrong();
-          score--;
-          escapes++;
-          nextQuestion();
-          flash(sky, 'fail');
+    if (!lost && wave.length) {
+      waveStart += dt;
+      const speed = (sky.clientHeight / rise) * speedFactor;
+      for (const balloon of [...wave]) {
+        if (waveStart < balloon.delay) continue;
+        balloon.y += (speed * dt) / 1000;
+        balloon.el.style.transform = `translateY(${-balloon.y}px)`;
+        if (balloon.y > sky.clientHeight) {
+          if (balloon.value === question.answer) {
+            loseWave();
+            break;
+          }
+          remove(balloon);
         }
       }
     }
-
-    const answerVisible = balloons.some(b => b.value === question.answer);
-    const gap = ((rise / count) * 1000) / speedFactor;
-    if (!answerVisible && sinceSpawn > 300) spawn(question.answer);
-    else if (balloons.length < count && sinceSpawn > gap) spawn(decoy());
     render();
     requestAnimationFrame(loop);
   }
 
   function finish() {
+    if (stopped) return;
     stopped = true;
     ctx.finish({
-      questions: pops + wrongPops + escapes,
-      correct: pops,
-      wrong: wrongPops + escapes,
-      accuracy: pops / Math.max(1, pops + wrongPops + escapes),
+      questions: score + (lost ? 1 : 0),
+      correct: score,
+      wrong: mistakes.length,
+      accuracy: score / Math.max(1, score + wrongPops + (lost ? 1 : 0)),
       elapsedMs: performance.now() - start,
       score,
+      mistakes,
     });
   }
 
-  render();
+  releaseWave();
   requestAnimationFrame(loop);
 
   return { key: () => false, rerender: render, stop() { stopped = true; } };

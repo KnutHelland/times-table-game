@@ -24,8 +24,9 @@ function match(source, tier, rounds = 2, pairs = 5) {
   return { game: 'match', source, rounds, pairs, medals };
 }
 
-const balloons = (source, seconds, rise, scores) =>
-  ({ game: 'balloons', source, seconds, rise, medals: scores.map(minScore => ({ minScore })) });
+// Reaching the gold score completes a balloon level, so it does not go on forever.
+const balloons = (source, rise, scores, count = 4) =>
+  ({ game: 'balloons', source, rise, count, target: scores[2], medals: scores.map(minScore => ({ minScore })) });
 
 const streak = (source, length, timeLimit, maxSeconds) =>
   ({ game: 'type', streak: length, source, timeLimit, medals: maxSeconds.map(s => ({ maxSeconds: s })) });
@@ -59,7 +60,7 @@ function buildCourse(with1112) {
       quiz('type', T(10), 'intro'),
       quiz('choice', T(5), 'intro'),
       quiz('type', T(5), 'intro'),
-      balloons(T(2, 5, 10), 45, 9, [5, 10, 15]),
+      balloons(T(2, 5, 10), 9, [5, 10, 15], 3),
     ] },
     { title: { en: 'The 1 table and a review', no: '1-gangen og repetisjon' }, levels: [
       quiz('trueFalse', T(1, 10), 'intro', { count: 12 }),
@@ -75,7 +76,7 @@ function buildCourse(with1112) {
       quiz('choice', T(4), 'intro'),
       quiz('type', T(4), 'intro'),
       quiz('missing', T(2, 4), 'practice'),
-      balloons(T(2, 4, 5, 10), 45, 8, [6, 12, 18]),
+      balloons(T(2, 4, 5, 10), 8, [6, 12, 18]),
     ] },
     { title: { en: 'The 3 table', no: '3-gangen' }, levels: [
       quiz('choice', T(3), 'intro'),
@@ -97,7 +98,7 @@ function buildCourse(with1112) {
     ] },
     { title: with1112 ? { en: 'Review: 1–5, 9, 10 and 11', no: 'Repetisjon: 1–5, 9, 10 og 11' } : { en: 'Review: 1–5, 9 and 10', no: 'Repetisjon: 1–5, 9 og 10' }, levels: [
       quiz('type', FIRST_HALF, 'review', { count: 20, timeLimit: 6 }),
-      balloons(FIRST_HALF, 60, 7, [8, 15, 22]),
+      balloons(FIRST_HALF, 7, [8, 15, 22]),
       streak(FIRST_HALF, 10, 6, [60, 35, 20]),
     ] },
     { title: { en: 'The 6 table: double the 3s', no: '6-gangen: dobbelt av 3-gangen' }, levels: [
@@ -125,14 +126,14 @@ function buildCourse(with1112) {
       match(TRICKY, 'practice'),
       quiz('choice', TRICKY, 'review', { timeLimit: 5 }),
       quiz('type', TRICKY, 'review', { timeLimit: 5 }),
-      balloons(TRICKY, 60, 6, [8, 16, 24]),
+      balloons(TRICKY, 6, [8, 16, 24]),
     ] },
     { title: { en: `Mastery: 1–${upTo}`, no: `Mester: 1–${upTo}` }, levels: [
       quiz('trueFalse', ALL, 'master', { timeLimit: 3 }),
       quiz('choice', ALL, 'master', { timeLimit: 4 }),
       quiz('missing', ALL, 'master', { timeLimit: 6 }),
       match(ALL, 'master', 4),
-      balloons(ALL, 60, 5, [10, 18, 26]),
+      balloons(ALL, 5, [10, 18, 26]),
       quiz('type', ALL, 'master'),
       streak(ALL, 20, 4, [80, 50, 30]),
       // 11 and 12 bring bigger products with three digits, so gold gets a little more time
