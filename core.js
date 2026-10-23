@@ -69,6 +69,15 @@ function createProfile(name, avatar) {
   return id;
 }
 
+function renameProfile(id, name) {
+  profiles.list.find(profile => profile.id === id).name = name.trim();
+  save(PROFILES_KEY, profiles);
+}
+
+// hidden feature: a player named Super has every level unlocked (but no medals); renaming makes it an ordinary player
+const SUPER_NAME = 'Super';
+const isSuperPlayer = () => sameName(activeProfile()?.name ?? '', SUPER_NAME);
+
 function deleteProfile(id) {
   for (const part of PROFILE_PARTS) remove(profileKey(id, part));
   profiles.list = profiles.list.filter(profile => profile.id !== id);

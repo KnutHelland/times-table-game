@@ -123,6 +123,8 @@ STRINGS.sv = {
   choosePicture: 'Välj en bild',
   picture: n => `Bild ${n}`,
   createProfile: 'Börja spela',
+  renameNamed: name => `Byt namn på ${name}`,
+  saveName: 'Spara',
   deleteNamed: name => `Radera ${name}`,
   deleteWarning: name => `Det här raderar ${name} med alla medaljer, rekord och inställningar. Det går inte att ångra.`,
   typeNameToConfirm: name => `Skriv ${name} för att bekräfta`,

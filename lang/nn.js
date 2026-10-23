@@ -123,6 +123,8 @@ STRINGS.nn = {
   choosePicture: 'Vel eit bilete',
   picture: n => `Bilete ${n}`,
   createProfile: 'Byrj å spele',
+  renameNamed: name => `Gi ${name} nytt namn`,
+  saveName: 'Lagre',
   deleteNamed: name => `Slett ${name}`,
   deleteWarning: name => `Dette slettar ${name} med alle medaljar, rekordar og innstillingar. Det kan ikkje angrast.`,
   typeNameToConfirm: name => `Skriv ${name} for å stadfeste`,

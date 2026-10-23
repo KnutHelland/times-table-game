@@ -123,6 +123,8 @@ STRINGS.de = {
   choosePicture: 'Wähle ein Bild',
   picture: n => `Bild ${n}`,
   createProfile: 'Los geht’s',
+  renameNamed: name => `${name} umbenennen`,
+  saveName: 'Speichern',
   deleteNamed: name => `${name} löschen`,
   deleteWarning: name => `Damit wird ${name} mit allen Medaillen, Bestenlisten und Einstellungen gelöscht. Das kann nicht rückgängig gemacht werden.`,
   typeNameToConfirm: name => `Gib ${name} ein, um zu bestätigen`,

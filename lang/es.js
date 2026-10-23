@@ -123,6 +123,8 @@ STRINGS.es = {
   choosePicture: 'Elige una imagen',
   picture: n => `Imagen ${n}`,
   createProfile: 'Empezar a jugar',
+  renameNamed: name => `Cambiar el nombre de ${name}`,
+  saveName: 'Guardar',
   deleteNamed: name => `Eliminar a ${name}`,
   deleteWarning: name => `Esto elimina a ${name} con todas sus medallas, récords y ajustes. No se puede deshacer.`,
   typeNameToConfirm: name => `Escribe ${name} para confirmar`,

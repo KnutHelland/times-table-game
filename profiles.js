@@ -27,11 +27,15 @@ function showProfiles(direction = 'forward', canGoBack = true) {
       choose.setAttribute('aria-pressed', profile.id === profiles.active);
       choose.append(avatarImage(profile.avatar, 'avatar'), el('span', '', profile.name));
       choose.addEventListener('click', () => switchProfile(profile.id));
-      const remove = el('button', 'icon-button', '🗑');
+      const rename = el('button', 'icon-button rename', '✏️');
+      rename.setAttribute('aria-label', t('renameNamed', profile.name));
+      rename.title = t('renameNamed', profile.name);
+      rename.addEventListener('click', () => showRenameProfile(profile));
+      const remove = el('button', 'icon-button delete', '🗑');
       remove.setAttribute('aria-label', t('deleteNamed', profile.name));
       remove.title = t('deleteNamed', profile.name);
       remove.addEventListener('click', () => showDeleteProfile(profile));
-      row.append(choose, remove);
+      row.append(choose, rename, remove);
       list.append(row);
     }
 
@@ -107,6 +111,51 @@ function showNewProfile() {
     update();
     if (firstRender) name.focus();
     firstRender = false;
+  });
+}
+
+function showRenameProfile(profile) {
+  let typedName = profile.name; // kept when a language change draws the screen again
+
+  show('rename-profile', () => {
+    const container = $('rename-profile');
+    const back = el('button', 'link', t('back'));
+    back.addEventListener('click', () => showProfiles('back'));
+
+    const heading = el('div', 'profile-heading');
+    heading.append(avatarImage(profile.avatar, 'avatar'), el('h2', '', t('renameNamed', profile.name)));
+
+    const name = el('input', 'text-input');
+    name.id = 'rename-name';
+    name.maxLength = MAX_NAME_LENGTH;
+    name.autocomplete = 'off';
+    name.value = typedName;
+    const label = el('label', 'field-label', t('profileName'));
+    label.htmlFor = name.id;
+    const error = el('p', 'warning', t('nameTaken'));
+
+    const saveButton = el('button', 'primary big', t('saveName'));
+    const nameIsTaken = () => profiles.list.some(other => other.id !== profile.id && sameName(other.name, name.value));
+    const update = () => {
+      error.hidden = !nameIsTaken();
+      saveButton.disabled = name.value.trim() === '' || nameIsTaken();
+    };
+    const submit = () => {
+      if (saveButton.disabled) return;
+      renameProfile(profile.id, name.value);
+      renderStatic(); // the header shows the current player's name
+      showProfiles('back');
+    };
+    name.addEventListener('input', () => {
+      typedName = name.value;
+      update();
+    });
+    name.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+    saveButton.addEventListener('click', submit);
+
+    container.replaceChildren(back, heading, label, name, error, saveButton);
+    update();
+    name.focus();
   });
 }
 

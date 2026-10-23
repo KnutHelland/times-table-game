@@ -99,7 +99,8 @@ button.danger { background: var(--fail); border-color: var(--fail); color: #fff;
 .avatar-button .avatar { width: 32px; height: 32px; }
 
 .profile-list { display: grid; gap: 8px; }
-.profile-row { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.profile-row { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; }
+.profile-choose span { overflow-wrap: anywhere; }
 .profile-choose { display: flex; align-items: center; gap: 12px; text-align: left; font-size: 1.1rem; padding: 8px 12px; }
 .profile-heading { display: flex; align-items: center; gap: 12px; margin: 16px 0 8px; }
 .profile-heading h2 { margin: 0; }

@@ -123,6 +123,8 @@ STRINGS.en = {
   choosePicture: 'Choose a picture',
   picture: n => `Picture ${n}`,
   createProfile: 'Start playing',
+  renameNamed: name => `Rename ${name}`,
+  saveName: 'Save',
   deleteNamed: name => `Delete ${name}`,
   deleteWarning: name => `This deletes ${name} with all medals, high scores and settings. It cannot be undone.`,
   typeNameToConfirm: name => `Type ${name} to confirm`,

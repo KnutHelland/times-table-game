@@ -24,8 +24,8 @@ let updateReady = false; // a newer version of the game has been downloaded and 
 let installPrompt = null; // the browser's install dialog, only offered where the game can be installed
 let currentScreen = null;
 
-const SCREENS = ['menu', 'settings', 'intro', 'play', 'result', 'profiles', 'new-profile', 'delete-profile'];
-const PROFILE_SCREENS = ['profiles', 'new-profile', 'delete-profile'];
+const SCREENS = ['menu', 'settings', 'intro', 'play', 'result', 'profiles', 'new-profile', 'rename-profile', 'delete-profile'];
+const PROFILE_SCREENS = ['profiles', 'new-profile', 'rename-profile', 'delete-profile'];
 const START_SCREENS = ['menu', 'profiles', 'new-profile'];
 
 function updateInstallButton() {
@@ -106,7 +106,7 @@ function renderMenu() {
 }
 
 const medalOf = level => progress[level.id]?.medal ?? 0;
-const isUnlocked = level => level.number === 1 || medalOf(LEVELS[level.number - 2]) > 0;
+const isUnlocked = level => level.number === 1 || isSuperPlayer() || medalOf(LEVELS[level.number - 2]) > 0;
 const gameName = level => t(level.streak ? 'game_streak' : `game_${level.game}`);
 
 function renderLevelMap() {

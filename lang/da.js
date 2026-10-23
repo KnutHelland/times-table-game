@@ -123,6 +123,8 @@ STRINGS.da = {
   choosePicture: 'Vælg et billede',
   picture: n => `Billede ${n}`,
   createProfile: 'Begynd at spille',
+  renameNamed: name => `Omdøb ${name}`,
+  saveName: 'Gem',
   deleteNamed: name => `Slet ${name}`,
   deleteWarning: name => `Dette sletter ${name} med alle medaljer, rekorder og indstillinger. Det kan ikke fortrydes.`,
   typeNameToConfirm: name => `Skriv ${name} for at bekræfte`,
