@@ -79,6 +79,8 @@ button.link { border: none; background: none; padding: 4px 0; color: var(--muted
 
 button.danger { background: var(--fail); border-color: var(--fail); color: #fff; }
 
+.install-button { width: 100%; margin-bottom: 8px; border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
 .update-banner {
   width: 100%;
   margin-bottom: 8px;

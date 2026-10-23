@@ -129,6 +129,7 @@ STRINGS.sv = {
   deleteForGood: 'Radera för gott',
   avatarCredits: 'Bilder: Twemoji av Twitter och bidragsgivare, CC BY 4.0.',
   updateReady: 'Ny version – tryck för att uppdatera',
+  installApp: '⬇ Installera spelet på den här enheten',
 
   unit_2: '2:ans tabell',
   unit_10and5: '10:ans och 5:ans tabell',

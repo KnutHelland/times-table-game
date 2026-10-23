@@ -129,6 +129,7 @@ STRINGS.de = {
   deleteForGood: 'Endgültig löschen',
   avatarCredits: 'Bilder: Twemoji von Twitter und Mitwirkenden, CC BY 4.0.',
   updateReady: 'Neue Version – zum Aktualisieren tippen',
+  installApp: '⬇ Spiel auf diesem Gerät installieren',
 
   unit_2: 'Die 2er-Reihe',
   unit_10and5: 'Die 10er- und 5er-Reihe',

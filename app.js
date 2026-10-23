@@ -21,9 +21,16 @@ const progress = loadOwn('progress', {}); // level id -> { medal }
 let runner = null;
 let renderScreen = null; // redraws the visible screen, e.g. after a language switch
 let updateReady = false; // a newer version of the game has been downloaded and is used after a reload
+let installPrompt = null; // the browser's install dialog, only offered where the game can be installed
+let currentScreen = null;
 
 const SCREENS = ['menu', 'settings', 'intro', 'play', 'result', 'profiles', 'new-profile', 'delete-profile'];
 const PROFILE_SCREENS = ['profiles', 'new-profile', 'delete-profile'];
+const START_SCREENS = ['menu', 'profiles', 'new-profile'];
+
+function updateInstallButton() {
+  $('install-button').hidden = !installPrompt || !START_SCREENS.includes(currentScreen);
+}
 
 // direction picks the transition: 'forward' slides the screen in from the right, 'back' from the left
 function show(screen, render, direction = 'forward') {
@@ -32,6 +39,8 @@ function show(screen, render, direction = 'forward') {
   $('open-settings').hidden = inGameOrProfiles || screen === 'settings';
   $('open-profiles').hidden = inGameOrProfiles || !activeProfile();
   $('update-banner').hidden = !updateReady || screen === 'play';
+  currentScreen = screen;
+  updateInstallButton();
   $(screen).classList.remove('enter-forward', 'enter-back');
   flash($(screen), `enter-${direction}`);
   renderScreen = render;
@@ -448,6 +457,23 @@ $('close-settings').addEventListener('click', toMenu);
 
 $('quit').addEventListener('click', toMenu);
 $('open-profiles').addEventListener('click', () => showProfiles());
+// Chrome and Edge announce when the game can be installed; other browsers never do, so there the button stays hidden
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installPrompt = e;
+  updateInstallButton();
+});
+window.addEventListener('appinstalled', () => {
+  installPrompt = null;
+  updateInstallButton();
+});
+$('install-button').addEventListener('click', () => {
+  const prompt = installPrompt; // a prompt can only be shown once
+  installPrompt = null;
+  updateInstallButton();
+  prompt?.prompt();
+});
+
 const RELOADED_FOR_UPDATE_KEY = 'ttg.reloadedForUpdate';
 $('update-banner').addEventListener('click', () => {
   try { sessionStorage.setItem(RELOADED_FOR_UPDATE_KEY, '1'); } catch {}

@@ -129,6 +129,7 @@ STRINGS.es = {
   deleteForGood: 'Eliminar para siempre',
   avatarCredits: 'Imágenes: Twemoji de Twitter y colaboradores, CC BY 4.0.',
   updateReady: 'Nueva versión – toca para actualizar',
+  installApp: '⬇ Instalar el juego en este dispositivo',
 
   unit_2: 'La tabla del 2',
   unit_10and5: 'Las tablas del 10 y del 5',

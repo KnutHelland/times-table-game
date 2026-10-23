@@ -38,5 +38,5 @@ When adding, renaming or removing a file, update `FILES` in `sw.js` and bump its
 ## Install on the phone
 
 1. Open the Pages address in Chrome on the phone.
-2. Tap **⋮ → Add to home screen → Install** (Chrome may also offer "Install app" by itself).
+2. Tap the **"⬇ Install the game on this device"** button at the top of the game's start screen (shown in Chrome and Edge when the game can be installed), or use **⋮ → Add to home screen → Install**.
 3. Open it once while online; after that it also works offline.

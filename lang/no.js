@@ -129,6 +129,7 @@ STRINGS.no = {
   deleteForGood: 'Slett for godt',
   avatarCredits: 'Bilder: Twemoji av Twitter og bidragsytere, CC BY 4.0.',
   updateReady: 'Ny versjon – trykk for å oppdatere',
+  installApp: '⬇ Installer spillet på denne enheten',
 
   unit_2: '2-gangen',
   unit_10and5: '10- og 5-gangen',

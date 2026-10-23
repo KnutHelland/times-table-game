@@ -129,6 +129,7 @@ STRINGS.en = {
   deleteForGood: 'Delete for good',
   avatarCredits: 'Pictures: Twemoji by Twitter and contributors, CC BY 4.0.',
   updateReady: 'New version – tap to update',
+  installApp: '⬇ Install the game on this device',
 
   unit_2: 'The 2 table',
   unit_10and5: 'The 10 and 5 tables',

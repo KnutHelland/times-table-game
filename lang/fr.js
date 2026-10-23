@@ -129,6 +129,7 @@ STRINGS.fr = {
   deleteForGood: 'Supprimer définitivement',
   avatarCredits: 'Images : Twemoji par Twitter et ses contributeurs, CC BY 4.0.',
   updateReady: 'Nouvelle version – touche pour mettre à jour',
+  installApp: '⬇ Installer le jeu sur cet appareil',
 
   unit_2: 'La table de 2',
   unit_10and5: 'Les tables de 10 et de 5',

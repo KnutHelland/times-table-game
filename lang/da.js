@@ -129,6 +129,7 @@ STRINGS.da = {
   deleteForGood: 'Slet for altid',
   avatarCredits: 'Billeder: Twemoji af Twitter og bidragydere, CC BY 4.0.',
   updateReady: 'Ny version – tryk for at opdatere',
+  installApp: '⬇ Installer spillet på denne enhed',
 
   unit_2: '2-tabellen',
   unit_10and5: '10- og 5-tabellen',
