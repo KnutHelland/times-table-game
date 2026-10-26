@@ -189,13 +189,14 @@ function factsText(source) {
 function detailsText(level) {
   const parts = [];
   if (level.game === 'match') parts.push(t('rounds', level.rounds, level.pairs));
+  else if (level.game === 'snake') parts.push(t('questions', level.count));
   else if (level.game === 'balloons') parts.push(t('balloonWave', level.count), t('balloonTarget', level.target));
   else if (!level.streak) parts.push(t('questions', level.count));
   if (level.timeLimit) parts.push(t('timeLimit', formatSeconds(level.timeLimit)));
   return parts.join(', ');
 }
 
-function goalText(goal) {
+function goalText(goal, level) {
   const parts = [];
   if (goal.minAccuracy === 1) parts.push(t('goalAllCorrect'));
   else if (goal.minAccuracy !== undefined) parts.push(t('goalAccuracy', Math.round(goal.minAccuracy * 100)));
@@ -203,7 +204,7 @@ function goalText(goal) {
   if (goal.maxSeconds !== undefined) parts.push(t('goalSeconds', formatSeconds(goal.maxSeconds)));
   if (goal.maxMistakes === 0) parts.push(t('goalNoMistakes'));
   else if (goal.maxMistakes !== undefined) parts.push(t('goalMistakes', goal.maxMistakes));
-  if (goal.minScore !== undefined) parts.push(t('goalScore', goal.minScore));
+  if (goal.minScore !== undefined) parts.push(t(level.game === 'snake' ? 'goalSnake' : 'goalScore', goal.minScore));
   return parts.join(', ');
 }
 
@@ -212,7 +213,7 @@ function goalList(level, result) {
   level.medals.forEach((goal, index) => {
     const item = el('li');
     const reached = result && meetsGoal(goal, result);
-    item.append(medalBadge(index + 1), el('strong', '', `${t(`medal${index + 1}`)}: `), goalText(goal));
+    item.append(medalBadge(index + 1), el('strong', '', `${t(`medal${index + 1}`)}: `), goalText(goal, level));
     if (reached) item.append(el('span', 'reached', ' ✓'));
     list.append(item);
   });
@@ -306,6 +307,7 @@ function finishLevel(level, result) {
 
 function levelStats(level, result) {
   if (level.game === 'balloons') return [t('statScore', result.score), t('statMistakes', result.wrong)];
+  if (level.game === 'snake') return [t('statAnswered', result.score, level.count), t('statTime', formatTime(result.elapsedMs))];
   if (level.game === 'match' || level.streak) return [t('statTime', formatTime(result.elapsedMs)), t('statMistakes', result.wrong)];
   return [t('statCorrect', result.correct, result.questions), t('statAvg', formatSeconds(Math.round(result.avgSeconds * 10) / 10)),
     t('statTime', formatTime(result.elapsedMs))];

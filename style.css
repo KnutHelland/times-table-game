@@ -354,6 +354,28 @@ button.load-save { width: 100%; margin-top: 10px; }
 @keyframes pop { to { opacity: 0; scale: 1.6; } }
 @keyframes burst { to { opacity: 0; scale: 0.4; } }
 
+/* snake */
+
+.snake-question { font-size: 2rem; margin: 4px 0; }
+.snake-board { display: block; margin: 6px auto 0; border-radius: 8px; touch-action: none; }
+.stage-snake .prompt { margin-top: 4px; }
+.stage-snake .feedback { min-height: 0; margin: 4px 0 0; }
+.snake-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas: ". up ." "left down right";
+  gap: 6px;
+  max-width: 300px;
+  margin: 8px auto 0;
+  touch-action: none;
+  user-select: none;
+}
+.snake-controls .dir { font-size: 1.3rem; min-height: 48px; padding: 0; }
+.dir-0 { grid-area: up; }
+.dir-1 { grid-area: right; }
+.dir-2 { grid-area: down; }
+.dir-3 { grid-area: left; }
+
 /* short phone screens: keep the whole play area, numpad included, without scrolling */
 
 @media (max-height: 700px) {

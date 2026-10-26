@@ -31,6 +31,15 @@ const balloons = (source, rise, scores, count = 4) =>
 const streak = (source, length, timeLimit, maxSeconds) =>
   ({ game: 'type', streak: length, source, timeLimit, medals: maxSeconds.map(s => ({ maxSeconds: s })) });
 
+// Snake: answer `count` questions by eating apples; the snake moves one tile per stepMs. Kinds: 'answer' (a × b = ?),
+// 'factor' (a × ? = c), 'expression' (? = c). With multiple, an expression question shows every right way to
+// write the answer (up to 3), and all of them must be eaten. Answering all questions is gold and completes the level.
+const snake = (source, count, stepMs, apples, kinds, multiple = false) => ({
+  game: 'snake', source, count, stepMs, apples, kinds, multiple, target: count,
+  medals: [Math.ceil(count / 2), Math.ceil(count * 0.75), count].map(minScore => ({ minScore })),
+});
+const ALL_KINDS = ['answer', 'factor', 'expression'];
+
 let UNITS = [];
 let LEVELS = [];
 
@@ -77,56 +86,66 @@ function createCourse(with1112) {
       [1, quiz('choice', SQUARES, 'intro')],
       [2, match(SQUARES, 'intro')],
       [3, quiz('type', SQUARES, 'practice')],
+      [4, snake(SQUARES, 6, 520, 3, ['answer'])],
     ] },
     { key: 'four', title: ['unit_4'], levels: [
       [1, quiz('choice', T(4), 'intro')],
       [2, quiz('type', T(4), 'intro')],
       [3, quiz('missing', T(2, 4), 'practice')],
       [4, balloons(T(2, 4, 5, 10), 8, [6, 12, 18])],
+      [5, snake(T(2, 4), 8, 500, 3, ['answer', 'factor'])],
     ] },
     { key: 'three', title: ['unit_3'], levels: [
       [1, quiz('choice', T(3), 'intro')],
       [2, quiz('trueFalse', T(3), 'intro', { count: 12 })],
       [3, quiz('type', T(3), 'intro')],
       [4, match(T(3, 4), 'practice')],
+      [5, snake(T(3, 4), 8, 480, 3, ['answer', 'factor'])],
     ] },
     { key: 'nine', title: ['unit_9'], levels: [
       [1, quiz('choice', T(9), 'intro')],
       [2, quiz('pickQuestion', T(9), 'practice')],
       [3, quiz('type', T(9), 'intro')],
       [4, quiz('missing', T(3, 9), 'practice')],
+      [5, snake(T(3, 9), 10, 460, 4, ALL_KINDS)],
     ] },
     with1112 && { key: 'eleven', title: ['unit_11'], levels: [
       [1, quiz('choice', T(11), 'intro')],
       [2, quiz('trueFalse', T(11), 'intro', { count: 12 })],
       [3, quiz('type', T(11), 'intro')],
       [4, match(T(10, 11), 'practice')],
+      [5, snake(T(10, 11), 10, 450, 4, ALL_KINDS)],
     ] },
     { key: 'review', title: ['unit_review', with1112], levels: [
       [1, quiz('type', FIRST_HALF, 'review', { count: 20, timeLimit: 6 })],
       [2, balloons(FIRST_HALF, 7, [8, 15, 22])],
       [3, streak(FIRST_HALF, 10, 6, [60, 35, 20])],
+      [4, snake(FIRST_HALF, 12, 430, 4, ALL_KINDS)],
     ] },
     { key: 'six', title: ['unit_6'], levels: [
       [1, quiz('choice', T(6), 'intro')],
       [2, quiz('type', T(6), 'intro')],
       [3, match(T(3, 6), 'practice')],
+      [4, snake(T(3, 6), 12, 410, 4, ALL_KINDS)],
     ] },
     with1112 && { key: 'twelve', title: ['unit_12'], levels: [
       [1, quiz('choice', T(12), 'intro')],
       [2, quiz('type', T(12), 'intro')],
       [3, quiz('missing', T(6, 12), 'practice')],
+      [4, snake(T(6, 12), 12, 400, 4, ALL_KINDS)],
     ] },
     { key: 'eight', title: ['unit_8'], levels: [
       [1, quiz('choice', T(8), 'intro')],
       [2, quiz('trueFalse', T(4, 8), 'practice')],
       [3, quiz('type', T(8), 'intro')],
+      [4, snake(T(4, 8), 12, 390, 4, ALL_KINDS, true)],
     ] },
     { key: 'seven', title: ['unit_7'], levels: [
       [1, quiz('choice', T(7), 'intro')],
       [2, quiz('type', T(7), 'intro')],
       [3, quiz('pickQuestion', T(6, 7, 8), 'practice')],
       [4, quiz('missing', T(6, 7, 8), 'practice')],
+      [5, snake(T(6, 7, 8), 14, 370, 4, ALL_KINDS, true)],
     ] },
     // 6–9 × 6–9: first each half with plenty of time, then all 16 facts, faster and faster
     { key: 'tricky', title: ['unit_tricky'], levels: [
@@ -138,6 +157,7 @@ function createCourse(with1112) {
       [2, quiz('choice', TRICKY, 'review', { timeLimit: 5 })],
       [3, quiz('type', TRICKY, 'review', { timeLimit: 5 })],
       [4, balloons(TRICKY, 6, [8, 16, 24])],
+      [9, snake(TRICKY, 14, 350, 5, ALL_KINDS, true)],
     ] },
     // all facts; every level a little harder than the one before, up to the final test
     { key: 'master', title: ['unit_mastery', upTo], levels: [
@@ -150,11 +170,13 @@ function createCourse(with1112) {
       [3, quiz('missing', ALL, 'master', { timeLimit: 6 })],
       [13, quiz('type', ALL, 'review', { count: 20, timeLimit: 6 })],
       [14, balloons(ALL, 6, [8, 15, 22])],
+      [17, snake(ALL, 16, 320, 5, ALL_KINDS, true)],
       [15, streak(ALL, 10, 6, [60, 35, 20])],
       [4, match(ALL, 'master', 4)],
       [5, balloons(ALL, 5, [10, 18, 26])],
       [6, quiz('type', ALL, 'master')],
       [16, quiz('missing', ALL, 'master', { count: 25, timeLimit: 4 })],
+      [18, snake(ALL, 20, 280, 5, ALL_KINDS, true)],
       [7, streak(ALL, 20, 4, [80, 50, 30])],
       // 11 and 12 bring bigger products with three digits, so gold gets a little more time
       [8, quiz('type', ALL, 'final', with1112 ? { medals: [{ minAccuracy: 0.9, maxAvg: 3 }, { minAccuracy: 1, maxAvg: 2 }, { minAccuracy: 1, maxAvg: 1.2 }] } : {})],
@@ -176,15 +198,18 @@ function buildCourse(with1112) {
 // --- medals saved before level ids were permanent ---
 
 // Until then a level's id was `<game>-<position in the course>`, so adding levels moved the medals of every later
-// level. The units below had this many levels then; the others were as they are now.
-const LEGACY_UNIT_SIZES = { tricky: 4, master: 8 };
+// level. The units had this many levels then (levels #1 to #size).
+const LEGACY_UNIT_SIZES = {
+  two: 4, tenFive: 5, one: 3, squares: 3, four: 4, three: 4, nine: 4, eleven: 4, review: 3, six: 3, twelve: 3,
+  eight: 3, seven: 4, tricky: 4, master: 8,
+};
 const LEGACY_GAMES = ['choice', 'trueFalse', 'type', 'match', 'balloons', 'missing', 'pickQuestion'];
 
 function legacyIdMap() {
   const map = {};
   for (const with1112 of [false, true]) {
     const oldOrder = createCourse(with1112).flatMap(unit => unit.levels
-      .filter(level => level.n <= (LEGACY_UNIT_SIZES[unit.key] ?? Infinity))
+      .filter(level => level.n <= LEGACY_UNIT_SIZES[unit.key])
       .sort((a, b) => a.n - b.n));
     oldOrder.forEach((level, index) => { map[`${with1112 ? '12:' : ''}${level.game}-${index + 1}`] = level.id; });
   }

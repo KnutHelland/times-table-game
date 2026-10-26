@@ -532,8 +532,300 @@ function runBalloons(ctx, config) {
   return { key: () => false, rerender: render, stop() { stopped = true; } };
 }
 
+// --- snake: steer with two turn buttons and eat the apple(s) with the right answer ---
+
+const SNAKE_COLS = 9;
+const SNAKE_ROWS = 11;
+const SNAKE_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]]; // up, right, down, left
+const SNAKE_KEYS = { ArrowUp: 0, w: 0, W: 0, ArrowRight: 1, d: 1, D: 1, ArrowDown: 2, s: 2, S: 2, ArrowLeft: 3, a: 3, A: 3 };
+const SNAKE_START_DELAY = 1200;
+const AHEAD_MIN = 4; // an apple is always this many tiles or more straight ahead when a question starts
+const AHEAD_MAX = 7;
+
+function runSnake(ctx, config) {
+  const { deck, count, stepMs, apples: appleCount, kinds, multiple } = config;
+  const maxFactor = settings.include1112 ? 12 : 10;
+  const start = performance.now();
+  const mistakes = [];
+  let snake = [{ x: 4, y: 7 }, { x: 4, y: 8 }, { x: 4, y: 9 }]; // head first
+  let dir = 0, queued = [], grow = 0;
+  let question = null, apples = [], rightLeft = 0, score = 0;
+  let last = performance.now(), sinceStep = -SNAKE_START_DELAY, over = false, stopped = false;
+  let cell = 30;
+
+  const prompt = el('p', 'prompt');
+  const questionEl = el('div', 'question snake-question');
+  const canvas = el('canvas', 'snake-board');
+  const feedbackEl = el('p', 'feedback');
+  // a D-pad: ▲ on top, ◀ ▼ ▶ below
+  const controls = el('div', 'snake-controls');
+  const arrows = ['▲', '▶', '▼', '◀'].map((symbol, direction) => {
+    const button = el('button', `dir dir-${direction}`, symbol);
+    // pointerdown instead of click: the snake must turn the moment the finger touches
+    button.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      steer(direction);
+    });
+    controls.append(button);
+    return button;
+  });
+  ctx.stage.replaceChildren(prompt, questionEl, canvas, feedbackEl, controls);
+
+  const wrap = (x, y) => ({ x: (x + SNAKE_COLS) % SNAKE_COLS, y: (y + SNAKE_ROWS) % SNAKE_ROWS });
+  const same = (a, b) => a.x === b.x && a.y === b.y;
+  const distance = (a, b) => {
+    const dx = Math.abs(a.x - b.x);
+    const dy = Math.abs(a.y - b.y);
+    return Math.min(dx, SNAKE_COLS - dx) + Math.min(dy, SNAKE_ROWS - dy);
+  };
+  const label = value => Array.isArray(value) ? expression(value[0], value[1]) : String(value);
+
+  // factors near the right one, so the wrong apples are plausible
+  function wrongFactors(factor, n) {
+    const candidates = range(1, maxFactor).filter(v => v !== factor);
+    return shuffle(candidates.sort((x, y) => Math.abs(x - factor) - Math.abs(y - factor)).slice(0, n * 2)).slice(0, n);
+  }
+
+  // every way to write the answer as a product of two factors in the game, each in random order
+  function expressionsFor(answer) {
+    return range(1, maxFactor).filter(x => answer % x === 0 && answer / x >= x && answer / x <= maxFactor)
+      .map(x => Math.random() < 0.5 ? [x, answer / x] : [answer / x, x]);
+  }
+
+  function makeQuestion() {
+    const fact = deck.next();
+    const { a, b, answer } = fact;
+    const kind = randomItem(kinds);
+    if (kind === 'factor') {
+      return { fact, text: `${a} ${t('times')} ? = ${answer}`, rights: [b], wrongs: wrongFactors(b, appleCount - 1) };
+    }
+    if (kind === 'expression') {
+      const all = expressionsFor(answer);
+      const rights = multiple ? shuffle(all).slice(0, Math.min(3, appleCount - 1)) : [[a, b]];
+      return { fact, text: `? = ${answer}`, rights, wrongs: wrongExpressions(fact, appleCount - rights.length) };
+    }
+    return { fact, text: expression(a, b), rights: [answer], wrongs: wrongAnswers(fact, appleCount - 1) };
+  }
+
+  function placeApples() {
+    const values = shuffle([
+      ...question.rights.map(value => ({ value, right: true })),
+      ...question.wrongs.map(value => ({ value, right: false })),
+    ]);
+    const head = snake[0];
+    const [dx, dy] = SNAKE_DIRECTIONS[dir];
+    const lineLength = dx ? SNAKE_COLS : SNAKE_ROWS;
+    const line = range(1, lineLength - 1).map(k => wrap(head.x + dx * k, head.y + dy * k));
+    const bodyOnLine = line.findIndex(c => snake.some(s => same(s, c)));
+    const reachable = bodyOnLine === -1 ? line.length : bodyOnLine;
+    const aheadOptions = range(AHEAD_MIN, Math.min(AHEAD_MAX, reachable));
+    const placed = [];
+    // the first of the shuffled apples goes straight ahead, so going straight is usually a wrong answer
+    if (aheadOptions.length) placed.push({ ...line[randomItem(aheadOptions) - 1], ...values.shift() });
+    const aheadIndex = placed.length ? line.findIndex(c => same(c, placed[0])) : -1;
+    const keepClear = line.slice(0, aheadIndex + 1);
+    const free = range(0, SNAKE_COLS * SNAKE_ROWS - 1)
+      .map(i => ({ x: i % SNAKE_COLS, y: Math.floor(i / SNAKE_COLS) }))
+      .filter(c => distance(c, head) >= 3 && !snake.some(s => same(s, c)) && !keepClear.some(k => same(k, c)));
+    for (const value of values) {
+      const spots = free.filter(c => !placed.some(p => distance(p, c) < 2));
+      if (!spots.length) break;
+      placed.push({ ...randomItem(spots), ...value });
+    }
+    apples = placed;
+    rightLeft = apples.filter(apple => apple.right).length;
+  }
+
+  function nextQuestion() {
+    question = makeQuestion();
+    placeApples();
+    feedbackEl.textContent = '';
+    flash(questionEl, 'ok');
+    render();
+  }
+
+  // up to two quick presses are remembered, one used per step; the current and the opposite direction are ignored
+  function steer(direction) {
+    if (stopped || over || queued.length >= 2) return;
+    const heading = queued.at(-1) ?? dir;
+    if (direction === heading || direction === (heading + 2) % 4) return;
+    queued.push(direction);
+  }
+
+  function step() {
+    if (queued.length) dir = queued.shift();
+    const [dx, dy] = SNAKE_DIRECTIONS[dir];
+    const next = wrap(snake[0].x + dx, snake[0].y + dy);
+    const body = grow ? snake : snake.slice(0, -1); // the tail moves away this step unless the snake grows
+    if (body.some(c => same(c, next))) return lose(null);
+    snake.unshift(next);
+    if (grow) grow--;
+    else snake.pop();
+    const apple = apples.find(a => same(a, next));
+    if (!apple) return;
+    if (!apple.right) return lose(apple);
+    playCorrect();
+    grow++;
+    apples = apples.filter(a => a !== apple);
+    rightLeft--;
+    if (rightLeft > 0) return;
+    score++;
+    apples = [];
+    if (score >= count) return finish();
+    nextQuestion();
+  }
+
+  function lose(apple) {
+    over = true;
+    playWrong();
+    flash(canvas, 'shake');
+    const { a, b, answer } = question.fact;
+    if (apple) {
+      mistakes.push({ a, b, answer, given: label(apple.value) });
+      feedbackEl.textContent = t('theAnswerIs', question.rights.map(label).join(', '));
+    } else {
+      feedbackEl.textContent = t('snakeCrashed');
+    }
+    draw();
+    setTimeout(finish, 1800);
+  }
+
+  function finish() {
+    if (stopped) return;
+    stopped = true;
+    const lostQuestion = over ? 1 : 0;
+    ctx.finish({
+      questions: score + lostQuestion,
+      correct: score,
+      wrong: mistakes.length,
+      accuracy: score / Math.max(1, score + lostQuestion),
+      elapsedMs: performance.now() - start,
+      score,
+      mistakes,
+    });
+  }
+
+  // the board fills the width, but stays short enough that the turn buttons fit on the screen
+  function layout() {
+    const top = canvas.getBoundingClientRect().top + window.scrollY;
+    const roomBelow = controls.getBoundingClientRect().bottom - canvas.getBoundingClientRect().bottom + 8;
+    const byWidth = ctx.stage.clientWidth / SNAKE_COLS;
+    const byHeight = (window.innerHeight - top - roomBelow) / SNAKE_ROWS;
+    cell = Math.max(20, Math.floor(Math.min(byWidth, byHeight)));
+    const ratio = window.devicePixelRatio || 1;
+    canvas.style.width = `${cell * SNAKE_COLS}px`;
+    canvas.style.height = `${cell * SNAKE_ROWS}px`;
+    canvas.width = cell * SNAKE_COLS * ratio;
+    canvas.height = cell * SNAKE_ROWS * ratio;
+    canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+    draw();
+  }
+
+  function draw() {
+    const g = canvas.getContext('2d');
+    const css = getComputedStyle(document.documentElement);
+    const color = name => css.getPropertyValue(name).trim();
+    g.fillStyle = color('--sky');
+    g.fillRect(0, 0, cell * SNAKE_COLS, cell * SNAKE_ROWS);
+    g.fillStyle = color('--line');
+    for (let x = 0; x < SNAKE_COLS; x++) {
+      for (let y = 0; y < SNAKE_ROWS; y++) if ((x + y) % 2) g.fillRect(x * cell, y * cell, cell, cell);
+    }
+
+    for (const apple of apples) {
+      const cx = (apple.x + 0.5) * cell;
+      const cy = (apple.y + 0.5) * cell;
+      g.beginPath();
+      g.arc(cx, cy, cell * 0.47, 0, Math.PI * 2);
+      g.fillStyle = '#d9473f';
+      g.fill();
+      if (over && apple.right) {
+        g.lineWidth = 3;
+        g.strokeStyle = color('--ok');
+        g.stroke();
+      }
+      const text = label(apple.value);
+      let size = Math.floor(cell * 0.45);
+      g.font = `600 ${size}px system-ui, sans-serif`;
+      while (size > 8 && g.measureText(text).width > cell * 0.9) g.font = `600 ${--size}px system-ui, sans-serif`;
+      g.fillStyle = '#fff';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText(text, cx, cy + 1);
+    }
+
+    snake.forEach((part, i) => {
+      const inset = i === 0 ? 1 : 3;
+      g.fillStyle = i === 0 ? '#1f7a43' : color('--ok');
+      g.beginPath();
+      g.roundRect(part.x * cell + inset, part.y * cell + inset, cell - inset * 2, cell - inset * 2, cell * 0.3);
+      g.fill();
+    });
+    // eyes on the head, looking where it goes
+    const head = snake[0];
+    const [dx, dy] = SNAKE_DIRECTIONS[dir];
+    g.fillStyle = '#fff';
+    for (const side of [-1, 1]) {
+      const ex = (head.x + 0.5 + dx * 0.2 + dy * side * 0.2) * cell;
+      const ey = (head.y + 0.5 + dy * 0.2 - dx * side * 0.2) * cell;
+      g.beginPath();
+      g.arc(ex, ey, cell * 0.09, 0, Math.PI * 2);
+      g.fill();
+    }
+  }
+
+  function render() {
+    prompt.textContent = rightLeft > 1 ? t('snakeEatAll', rightLeft) : t('prompt_snake');
+    setText(questionEl, question.text);
+    ['dirUp', 'dirRight', 'dirDown', 'dirLeft'].forEach((key, i) => arrows[i].setAttribute('aria-label', t(key)));
+    ctx.hud.progress(score / count, t('questionOf', Math.min(score + 1, count), count));
+  }
+
+  function loop(now) {
+    if (stopped) return;
+    const dt = Math.min(now - last, 100); // a hidden tab pauses the game instead of jumping ahead
+    last = now;
+    if (!over) {
+      sinceStep += dt;
+      while (sinceStep >= stepMs && !over && !stopped) {
+        sinceStep -= stepMs;
+        step();
+      }
+      if (!stopped) draw();
+    }
+    ctx.hud.clock(formatTime(now - start));
+    ctx.hud.stats({ score, wrong: mistakes.length, elapsedMs: now - start, progress: score / count });
+    requestAnimationFrame(loop);
+  }
+
+  nextQuestion();
+  layout();
+  window.addEventListener('resize', layout);
+  requestAnimationFrame(loop);
+
+  return {
+    key(e) {
+      const direction = SNAKE_KEYS[e.key];
+      if (direction === undefined) return false;
+      steer(direction);
+      return true;
+    },
+    rerender() {
+      render();
+      draw();
+    },
+    stop() {
+      stopped = true;
+      window.removeEventListener('resize', layout);
+    },
+    // the live game state, for scripted tests and debugging
+    inspect: () => ({ snake, dir, queued, apples, question, rightLeft, score, over, cols: SNAKE_COLS, rows: SNAKE_ROWS }),
+  };
+}
+
 function runGame(ctx, config) {
   if (config.game === 'match') return runMatch(ctx, config);
   if (config.game === 'balloons') return runBalloons(ctx, config);
+  if (config.game === 'snake') return runSnake(ctx, config);
   return runQuiz(ctx, config);
 }
