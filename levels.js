@@ -145,7 +145,7 @@ function createCourse(with1112) {
       [2, quiz('type', T(7), 'intro')],
       [3, quiz('pickQuestion', T(6, 7, 8), 'practice')],
       [4, quiz('missing', T(6, 7, 8), 'practice')],
-      [5, snake(T(6, 7, 8), 14, 370, 4, ALL_KINDS, true)],
+      [5, snake(T(6, 7, 8), 14, 380, 4, ALL_KINDS, true)],
     ] },
     // 6–9 × 6–9: first each half with plenty of time, then all 16 facts, faster and faster
     { key: 'tricky', title: ['unit_tricky'], levels: [
@@ -157,7 +157,7 @@ function createCourse(with1112) {
       [2, quiz('choice', TRICKY, 'review', { timeLimit: 5 })],
       [3, quiz('type', TRICKY, 'review', { timeLimit: 5 })],
       [4, balloons(TRICKY, 6, [8, 16, 24])],
-      [9, snake(TRICKY, 14, 350, 5, ALL_KINDS, true)],
+      [9, snake(TRICKY, 14, 370, 5, ALL_KINDS, true)],
     ] },
     // all facts; every level a little harder than the one before, up to the final test
     { key: 'master', title: ['unit_mastery', upTo], levels: [
@@ -170,13 +170,13 @@ function createCourse(with1112) {
       [3, quiz('missing', ALL, 'master', { timeLimit: 6 })],
       [13, quiz('type', ALL, 'review', { count: 20, timeLimit: 6 })],
       [14, balloons(ALL, 6, [8, 15, 22])],
-      [17, snake(ALL, 16, 320, 5, ALL_KINDS, true)],
+      [17, snake(ALL, 16, 355, 5, ALL_KINDS, true)],
       [15, streak(ALL, 10, 6, [60, 35, 20])],
       [4, match(ALL, 'master', 4)],
       [5, balloons(ALL, 5, [10, 18, 26])],
       [6, quiz('type', ALL, 'master')],
       [16, quiz('missing', ALL, 'master', { count: 25, timeLimit: 4 })],
-      [18, snake(ALL, 20, 280, 5, ALL_KINDS, true)],
+      [18, snake(ALL, 20, 340, 5, ALL_KINDS, true)],
       [7, streak(ALL, 20, 4, [80, 50, 30])],
       // 11 and 12 bring bigger products with three digits, so gold gets a little more time
       [8, quiz('type', ALL, 'final', with1112 ? { medals: [{ minAccuracy: 0.9, maxAvg: 3 }, { minAccuracy: 1, maxAvg: 2 }, { minAccuracy: 1, maxAvg: 1.2 }] } : {})],

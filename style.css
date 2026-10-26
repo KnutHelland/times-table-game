@@ -363,7 +363,7 @@ button.load-save { width: 100%; margin-top: 10px; }
 .snake-controls {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-areas: ". up ." "left down right";
+  grid-template-areas: "left up right" "left down right"; /* ◀ and ▶ fill the full height */
   gap: 6px;
   max-width: 300px;
   margin: 8px auto 0;
