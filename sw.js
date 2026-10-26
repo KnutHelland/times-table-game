@@ -1,5 +1,6 @@
 // Offline support: serve the game from the cache. When the page asks (at start and when the app comes back
-// to the foreground), download the files again and tell the page if any of them changed, so it can offer to reload.
+// to the foreground), download the files again and tell the page if the content of any of them changed, so it can
+// offer to reload.
 const CACHE = 'times-tables-v6';
 const LANGUAGES = ['en', 'no', 'nn', 'sv', 'da', 'de', 'fr', 'es'];
 const FLAGS = ['gb', 'no', 'se', 'dk', 'de', 'fr', 'es'];
@@ -16,7 +17,15 @@ const FILES = [
 // GitHub Pages lets browsers cache files for 10 minutes; 'no-cache' asks the server every time (cheap, via ETag)
 const fetchFresh = file => fetch(file, { cache: 'no-cache' });
 
-const version = response => response.headers.get('etag') ?? response.headers.get('last-modified');
+// GitHub Pages' ETags contain the time each file was deployed, so every push changes them for all files, and
+// copies of the same deploy on different servers can differ by a second. Only the content tells a real update.
+async function sameContent(a, b) {
+  const [x, y] = await Promise.all([a.clone().arrayBuffer(), b.clone().arrayBuffer()]);
+  if (x.byteLength !== y.byteLength) return false;
+  const bytesX = new Uint8Array(x);
+  const bytesY = new Uint8Array(y);
+  return bytesX.every((byte, i) => byte === bytesY[i]);
+}
 
 // Served files keep the server's 'max-age', which lets the browser reuse old scripts from memory on a reload
 // without asking this worker, so the reload after an update would still show the old version.
@@ -54,7 +63,8 @@ async function checkForUpdate() {
     const fresh = await fetchFresh(file).catch(() => null); // offline: keep what we have
     if (!fresh?.ok) return;
     const cached = await cache.match(file);
-    if (cached && version(cached) !== version(fresh)) changed = true;
+    if (cached && await sameContent(cached, fresh)) return;
+    if (cached) changed = true;
     await cache.put(file, await withoutBrowserCaching(fresh));
   }));
   // a newer worker took over during the check and already deleted this cache; the puts above made it again
