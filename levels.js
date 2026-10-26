@@ -16,7 +16,20 @@ const MATCH_TIERS = {
   master: { perPair: [10, 6, 3.5], mistakes: [3, 1, 0] },
 };
 
-const quiz = (game, source, tier, overrides = {}) => ({ game, source, ...QUIZ_TIERS[tier], ...overrides });
+// Reading four expressions and working each one out takes much longer than recalling one answer, so Find the
+// question gets this many times the tier's time limit and per-answer medal goals.
+const TIME_FACTORS = { pickQuestion: 2 };
+
+function quiz(game, source, tier, overrides = {}) {
+  const level = { game, source, ...QUIZ_TIERS[tier], ...overrides };
+  const factor = TIME_FACTORS[game] ?? 1;
+  if (factor === 1) return level;
+  return {
+    ...level,
+    timeLimit: level.timeLimit && level.timeLimit * factor,
+    medals: level.medals.map(goal => goal.maxAvg === undefined ? goal : { ...goal, maxAvg: goal.maxAvg * factor }),
+  };
+}
 
 function match(source, tier, rounds = 2, pairs = 5) {
   const { perPair, mistakes } = MATCH_TIERS[tier];
