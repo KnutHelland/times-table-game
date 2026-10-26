@@ -778,7 +778,9 @@ function runSnake(ctx, config) {
     prompt.textContent = rightLeft > 1 ? t('snakeEatAll', rightLeft) : t('prompt_snake');
     setText(questionEl, question.text);
     ['dirUp', 'dirRight', 'dirDown', 'dirLeft'].forEach((key, i) => arrows[i].setAttribute('aria-label', t(key)));
-    ctx.hud.progress(score / count, t('questionOf', Math.min(score + 1, count), count));
+    // without a count (free play) the game goes on until the player loses
+    if (count) ctx.hud.progress(score / count, t('questionOf', Math.min(score + 1, count), count));
+    else ctx.hud.progress(0, t('rightAnswers', score));
   }
 
   function loop(now) {
@@ -794,7 +796,7 @@ function runSnake(ctx, config) {
       if (!stopped) draw();
     }
     ctx.hud.clock(formatTime(now - start));
-    ctx.hud.stats({ score, wrong: mistakes.length, elapsedMs: now - start, progress: score / count });
+    ctx.hud.stats({ score, wrong: mistakes.length, elapsedMs: now - start, progress: count ? score / count : 0 });
     requestAnimationFrame(loop);
   }
 

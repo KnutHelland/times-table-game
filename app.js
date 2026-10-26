@@ -10,7 +10,12 @@ const FREE_MODES = {
   missing: { game: 'missing', count: 20, ranking: 'correct', name: 'game_missing', desc: 'exerciseDesc' },
   match: { game: 'match', rounds: 3, pairs: 5, ranking: 'mistakes', name: 'game_match', desc: 'freeMatchDesc' },
   balloons: { game: 'balloons', rise: 7, count: 4, ranking: 'score', name: 'game_balloons', desc: 'freeBalloonsDesc' },
+  // one Snake card with three difficulties, each with its own high scores; endless, like the balloons
+  snakeEasy: { game: 'snake', difficulty: 'snakeEasy', stepMs: 650, apples: 3, kinds: ['answer'], ranking: 'score', name: 'game_snake', desc: 'freeSnakeDesc' },
+  snakeMedium: { game: 'snake', difficulty: 'snakeMedium', stepMs: 500, apples: 4, kinds: ['answer', 'factor', 'expression'], ranking: 'score', name: 'game_snake', desc: 'freeSnakeDesc' },
+  snakeHard: { game: 'snake', difficulty: 'snakeHard', stepMs: 380, apples: 5, kinds: ['answer', 'factor', 'expression'], multiple: true, ranking: 'score', name: 'game_snake', desc: 'freeSnakeDesc' },
 };
+const SNAKE_MODES = ['snakeEasy', 'snakeMedium', 'snakeHard'];
 const MAX_SCORES = 10;
 const SHOWN_SCORES = 5;
 
@@ -168,6 +173,7 @@ function renderFreePlay() {
   const modes = $('modes');
   modes.replaceChildren();
   for (const [id, mode] of Object.entries(FREE_MODES)) {
+    if (mode.game === 'snake') continue;
     const card = el('button', 'mode');
     card.disabled = selectedTables().length === 0;
     const best = scores[id][0];
@@ -176,7 +182,29 @@ function renderFreePlay() {
     card.addEventListener('click', () => startFreePlay(id));
     modes.append(card);
   }
+  if (snakeReached()) modes.append(snakeCard());
 }
+
+// Snake joins free play once the player has come as far as the first snake level
+const snakeReached = () => isUnlocked(LEVELS.find(level => level.game === 'snake'));
+
+function snakeCard() {
+  const card = el('div', 'mode snake-mode');
+  const buttons = el('div', 'difficulties');
+  for (const id of SNAKE_MODES) {
+    const button = el('button', '');
+    button.disabled = selectedTables().length === 0;
+    const best = scores[id][0];
+    button.append(el('strong', '', t(FREE_MODES[id].difficulty)),
+      el('span', 'best', best ? `${t('best')}: ${describeScore(id, best)}` : ''));
+    button.addEventListener('click', () => startFreePlay(id));
+    buttons.append(button);
+  }
+  card.append(el('strong', '', t('game_snake')), el('span', 'small', t('freeSnakeDesc')), buttons);
+  return card;
+}
+
+const modeTitle = mode => mode.difficulty ? `${t(mode.name)} (${t(mode.difficulty)})` : t(mode.name);
 
 // --- level intro ---
 
@@ -369,6 +397,7 @@ function describeScore(modeId, score) {
   const time = formatTime(score.time);
   if (mode.ranking === 'correct') return t('correctOf', score.correct, mode.count, time);
   if (mode.ranking === 'mistakes') return `${time} – ${t('statMistakes', score.wrong)}`;
+  if (mode.game === 'snake') return t('rightAnswers', score.score);
   if (mode.ranking === 'score') return `${t('points', score.score)} – ${t('statMistakes', score.wrong)}`;
   return time;
 }
@@ -395,7 +424,7 @@ function finishFreePlay(modeId, tables, result) {
 function renderFreeResult(modeId, tables, result, score, rank) {
   const mode = FREE_MODES[modeId];
   const container = $('result');
-  container.replaceChildren(el('h2', '', `${t(mode.name)} – ${t('finished')}`));
+  container.replaceChildren(el('h2', '', `${modeTitle(mode)} – ${t('finished')}`));
   container.append(el('p', 'result-main',
     mode.ranking === 'time' ? t('finishedIn', formatTime(score.time)) : describeScore(modeId, score)));
   const record = rank === 1 ? t('newRecord') : rank > 0 && rank <= SHOWN_SCORES ? t('rank', rank) : '';
