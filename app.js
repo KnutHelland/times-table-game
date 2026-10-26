@@ -16,7 +16,15 @@ const SHOWN_SCORES = 5;
 
 const emptyScores = () => Object.fromEntries(Object.keys(FREE_MODES).map(id => [id, []]));
 const scores = { ...emptyScores(), ...loadOwn('scores', {}) };
-const progress = loadOwn('progress', {}); // level id -> { medal }
+const progress = loadProgress(); // level id -> { medal }
+
+// medals saved under the old, position-based level ids are moved to the permanent ids the first time
+function loadProgress() {
+  const stored = loadOwn('progress', {});
+  const migrated = migrateProgress(stored);
+  if (migrated !== stored) saveOwn('progress', migrated);
+  return migrated;
+}
 
 let runner = null;
 let renderScreen = null; // redraws the visible screen, e.g. after a language switch
@@ -174,7 +182,7 @@ function renderFreePlay() {
 
 function factsText(source) {
   if (source.facts === 'squares') return t('factsSquares', source.max);
-  if (source.facts === 'tricky') return t('factsTricky');
+  if (source.facts === 'tricky') return source.tables ? t('factsTrickyPart', source.tables) : t('factsTricky');
   return t('factsTables', source.tables);
 }
 
@@ -419,7 +427,7 @@ function switchProfile(id) {
   save(PROFILES_KEY, profiles);
   replaceContents(settings, { ...defaultSettings(), ...loadOwn('settings', {}) });
   replaceContents(scores, { ...emptyScores(), ...loadOwn('scores', {}) });
-  replaceContents(progress, loadOwn('progress', {}));
+  replaceContents(progress, loadProgress());
   rememberLanguage();
   buildCourse(settings.include1112);
   renderStatic();

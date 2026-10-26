@@ -79,6 +79,7 @@ STRINGS.no = {
   factsTables: tables => tables.length === 1 ? `${tables[0]}-gangen` : `Gangetabellene ${formatTables(tables)}`,
   factsSquares: max => `Kvadrattall, 1 · 1 til ${max} · ${max}`,
   factsTricky: '6, 7, 8 og 9 ganger 6, 7, 8 og 9',
+  factsTrickyPart: tables => `${tables.join(' og ')} ganger 6, 7, 8 og 9`,
   timeLimit: s => `${s} per oppgave`,
   questions: n => `${n} oppgaver`,
   rounds: (rounds, pairs) => `${rounds} runder med ${pairs} par`,

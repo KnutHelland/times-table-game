@@ -79,6 +79,7 @@ STRINGS.de = {
   factsTables: tables => tables.length === 1 ? `Die ${tables[0]}er-Reihe` : `Die Reihen ${formatTables(tables)}`,
   factsSquares: max => `Quadratzahlen, 1 · 1 bis ${max} · ${max}`,
   factsTricky: '6, 7, 8 und 9 mal 6, 7, 8 und 9',
+  factsTrickyPart: tables => `${tables.join(' und ')} mal 6, 7, 8 und 9`,
   timeLimit: s => `${s} pro Aufgabe`,
   questions: n => `${n} Aufgaben`,
   rounds: (rounds, pairs) => `${rounds} Runden mit ${pairs} Paaren`,

@@ -79,6 +79,7 @@ STRINGS.nn = {
   factsTables: tables => tables.length === 1 ? `${tables[0]}-gongen` : `Gongetabellane ${formatTables(tables)}`,
   factsSquares: max => `Kvadrattal, 1 · 1 til ${max} · ${max}`,
   factsTricky: '6, 7, 8 og 9 gonger 6, 7, 8 og 9',
+  factsTrickyPart: tables => `${tables.join(' og ')} gonger 6, 7, 8 og 9`,
   timeLimit: s => `${s} per oppgåve`,
   questions: n => `${n} oppgåver`,
   rounds: (rounds, pairs) => `${rounds} rundar med ${pairs} par`,

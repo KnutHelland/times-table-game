@@ -199,10 +199,11 @@ function flash(element, className) {
 
 // --- questions ---
 
-// A fact source is { tables, factors }, { facts: 'squares', max } or { facts: 'tricky' }.
+// A fact source is { tables, factors }, { facts: 'squares', max } or { facts: 'tricky' } (6–9 × 6–9, or with
+// tables only those tables × 6–9).
 function factsFor(source) {
   if (source.facts === 'squares') return range(1, source.max ?? 10).map(n => [n, n]);
-  if (source.facts === 'tricky') return range(6, 9).flatMap(a => range(6, 9).map(b => [a, b]));
+  if (source.facts === 'tricky') return (source.tables ?? range(6, 9)).flatMap(a => range(6, 9).map(b => [a, b]));
   const factors = source.factors ?? range(1, 10);
   return source.tables.flatMap(table => factors.map(factor => [table, factor]));
 }

@@ -2,9 +2,10 @@
 // to another device or kept as a backup. Format: SAVE_PREFIX + base64url(UTF-8 JSON). Base64 survives chat apps and
 // e-mail, which change quotes and wrap lines in plain JSON. The JSON names its format and version, so a later
 // version of the game can still read old codes: when SAVE_VERSION goes up, add a migration step in readSaveCode.
+// Version 2: medals are stored by permanent level ids (version 1 used positions, migrated by migrateProgress).
 const SAVE_PREFIX = 'ttg1.';
 const SAVE_FORMAT = 'times-table-game/player';
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
 
 function toBase64Url(text) {
   let binary = '';
@@ -50,7 +51,7 @@ function cleanProgress(raw) {
   for (const [id, entry] of Object.entries(raw)) {
     if (/^(12:)?[A-Za-z]+-\d+$/.test(id) && [1, 2, 3].includes(entry?.medal)) clean[id] = { medal: entry.medal };
   }
-  return clean;
+  return migrateProgress(clean);
 }
 
 function cleanScores(raw) {

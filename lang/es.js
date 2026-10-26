@@ -79,6 +79,7 @@ STRINGS.es = {
   factsTables: tables => tables.length === 1 ? `La tabla del ${tables[0]}` : `Las tablas del ${formatTables(tables)}`,
   factsSquares: max => `Los cuadrados, de 1 × 1 a ${max} × ${max}`,
   factsTricky: '6, 7, 8 y 9 por 6, 7, 8 y 9',
+  factsTrickyPart: tables => `${tables.join(' y ')} por 6, 7, 8 y 9`,
   timeLimit: s => `${s} por pregunta`,
   questions: n => `${n} preguntas`,
   rounds: (rounds, pairs) => `${rounds} rondas de ${pairs} parejas`,

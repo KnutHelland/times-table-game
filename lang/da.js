@@ -79,6 +79,7 @@ STRINGS.da = {
   factsTables: tables => tables.length === 1 ? `${tables[0]}-tabellen` : `Tabellerne ${formatTables(tables)}`,
   factsSquares: max => `Kvadrattal, 1 · 1 til ${max} · ${max}`,
   factsTricky: '6, 7, 8 og 9 gange 6, 7, 8 og 9',
+  factsTrickyPart: tables => `${tables.join(' og ')} gange 6, 7, 8 og 9`,
   timeLimit: s => `${s} pr. opgave`,
   questions: n => `${n} opgaver`,
   rounds: (rounds, pairs) => `${rounds} runder med ${pairs} par`,

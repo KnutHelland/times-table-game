@@ -38,116 +38,171 @@ let LEVELS = [];
 // hardest facts last. Each table is introduced with an easy gameplay and lots of time before it has to be typed.
 // With the 11 and 12 tables on, every table goes up to 12 times, 11 comes after the 9s (its pattern is easy)
 // and 12 right after the 6s (double the 6s).
-function buildCourse(with1112) {
+//
+// Each level is [n, level], where n is its permanent number in the unit: medals are stored by the id
+// `<unit>-<n>`, so a number is never changed or reused, and a new level takes the next free number wherever it
+// is placed. The two courses keep separate medals (ids of the 11-and-12 course start with '12:').
+function createCourse(with1112) {
   const maxFactor = with1112 ? 12 : 10;
   const T = (...tables) => ({ tables, factors: range(1, maxFactor) });
   const SQUARES = { facts: 'squares', max: maxFactor };
   const TRICKY = { facts: 'tricky' };
+  const TRICKY_67 = { facts: 'tricky', tables: [6, 7] };
+  const TRICKY_89 = { facts: 'tricky', tables: [8, 9] };
   const EASY = T(1, 2, 5, 10);
   const FIRST_HALF = with1112 ? T(1, 2, 3, 4, 5, 9, 10, 11) : T(1, 2, 3, 4, 5, 9, 10);
   const ALL = T(...range(1, maxFactor));
   const upTo = with1112 ? '12' : '10';
 
   const units = [
-    { title: ['unit_2'], levels: [
-      quiz('choice', T(2), 'intro'),
-      quiz('trueFalse', T(2), 'intro', { count: 12 }),
-      quiz('type', T(2), 'intro'),
-      match(T(2), 'intro'),
+    { key: 'two', title: ['unit_2'], levels: [
+      [1, quiz('choice', T(2), 'intro')],
+      [2, quiz('trueFalse', T(2), 'intro', { count: 12 })],
+      [3, quiz('type', T(2), 'intro')],
+      [4, match(T(2), 'intro')],
     ] },
-    { title: ['unit_10and5'], levels: [
-      quiz('choice', T(10), 'intro'),
-      quiz('type', T(10), 'intro'),
-      quiz('choice', T(5), 'intro'),
-      quiz('type', T(5), 'intro'),
-      balloons(T(2, 5, 10), 9, [5, 10, 15], 3),
+    { key: 'tenFive', title: ['unit_10and5'], levels: [
+      [1, quiz('choice', T(10), 'intro')],
+      [2, quiz('type', T(10), 'intro')],
+      [3, quiz('choice', T(5), 'intro')],
+      [4, quiz('type', T(5), 'intro')],
+      [5, balloons(T(2, 5, 10), 9, [5, 10, 15], 3)],
     ] },
-    { title: ['unit_1'], levels: [
-      quiz('trueFalse', T(1, 10), 'intro', { count: 12 }),
-      quiz('pickQuestion', T(2, 5, 10), 'practice'),
-      quiz('type', EASY, 'review'),
+    { key: 'one', title: ['unit_1'], levels: [
+      [1, quiz('trueFalse', T(1, 10), 'intro', { count: 12 })],
+      [2, quiz('pickQuestion', T(2, 5, 10), 'practice')],
+      [3, quiz('type', EASY, 'review')],
     ] },
-    { title: ['unit_squares'], levels: [
-      quiz('choice', SQUARES, 'intro'),
-      match(SQUARES, 'intro'),
-      quiz('type', SQUARES, 'practice'),
+    { key: 'squares', title: ['unit_squares'], levels: [
+      [1, quiz('choice', SQUARES, 'intro')],
+      [2, match(SQUARES, 'intro')],
+      [3, quiz('type', SQUARES, 'practice')],
     ] },
-    { title: ['unit_4'], levels: [
-      quiz('choice', T(4), 'intro'),
-      quiz('type', T(4), 'intro'),
-      quiz('missing', T(2, 4), 'practice'),
-      balloons(T(2, 4, 5, 10), 8, [6, 12, 18]),
+    { key: 'four', title: ['unit_4'], levels: [
+      [1, quiz('choice', T(4), 'intro')],
+      [2, quiz('type', T(4), 'intro')],
+      [3, quiz('missing', T(2, 4), 'practice')],
+      [4, balloons(T(2, 4, 5, 10), 8, [6, 12, 18])],
     ] },
-    { title: ['unit_3'], levels: [
-      quiz('choice', T(3), 'intro'),
-      quiz('trueFalse', T(3), 'intro', { count: 12 }),
-      quiz('type', T(3), 'intro'),
-      match(T(3, 4), 'practice'),
+    { key: 'three', title: ['unit_3'], levels: [
+      [1, quiz('choice', T(3), 'intro')],
+      [2, quiz('trueFalse', T(3), 'intro', { count: 12 })],
+      [3, quiz('type', T(3), 'intro')],
+      [4, match(T(3, 4), 'practice')],
     ] },
-    { title: ['unit_9'], levels: [
-      quiz('choice', T(9), 'intro'),
-      quiz('pickQuestion', T(9), 'practice'),
-      quiz('type', T(9), 'intro'),
-      quiz('missing', T(3, 9), 'practice'),
+    { key: 'nine', title: ['unit_9'], levels: [
+      [1, quiz('choice', T(9), 'intro')],
+      [2, quiz('pickQuestion', T(9), 'practice')],
+      [3, quiz('type', T(9), 'intro')],
+      [4, quiz('missing', T(3, 9), 'practice')],
     ] },
-    with1112 && { title: ['unit_11'], levels: [
-      quiz('choice', T(11), 'intro'),
-      quiz('trueFalse', T(11), 'intro', { count: 12 }),
-      quiz('type', T(11), 'intro'),
-      match(T(10, 11), 'practice'),
+    with1112 && { key: 'eleven', title: ['unit_11'], levels: [
+      [1, quiz('choice', T(11), 'intro')],
+      [2, quiz('trueFalse', T(11), 'intro', { count: 12 })],
+      [3, quiz('type', T(11), 'intro')],
+      [4, match(T(10, 11), 'practice')],
     ] },
-    { title: ['unit_review', with1112], levels: [
-      quiz('type', FIRST_HALF, 'review', { count: 20, timeLimit: 6 }),
-      balloons(FIRST_HALF, 7, [8, 15, 22]),
-      streak(FIRST_HALF, 10, 6, [60, 35, 20]),
+    { key: 'review', title: ['unit_review', with1112], levels: [
+      [1, quiz('type', FIRST_HALF, 'review', { count: 20, timeLimit: 6 })],
+      [2, balloons(FIRST_HALF, 7, [8, 15, 22])],
+      [3, streak(FIRST_HALF, 10, 6, [60, 35, 20])],
     ] },
-    { title: ['unit_6'], levels: [
-      quiz('choice', T(6), 'intro'),
-      quiz('type', T(6), 'intro'),
-      match(T(3, 6), 'practice'),
+    { key: 'six', title: ['unit_6'], levels: [
+      [1, quiz('choice', T(6), 'intro')],
+      [2, quiz('type', T(6), 'intro')],
+      [3, match(T(3, 6), 'practice')],
     ] },
-    with1112 && { title: ['unit_12'], levels: [
-      quiz('choice', T(12), 'intro'),
-      quiz('type', T(12), 'intro'),
-      quiz('missing', T(6, 12), 'practice'),
+    with1112 && { key: 'twelve', title: ['unit_12'], levels: [
+      [1, quiz('choice', T(12), 'intro')],
+      [2, quiz('type', T(12), 'intro')],
+      [3, quiz('missing', T(6, 12), 'practice')],
     ] },
-    { title: ['unit_8'], levels: [
-      quiz('choice', T(8), 'intro'),
-      quiz('trueFalse', T(4, 8), 'practice'),
-      quiz('type', T(8), 'intro'),
+    { key: 'eight', title: ['unit_8'], levels: [
+      [1, quiz('choice', T(8), 'intro')],
+      [2, quiz('trueFalse', T(4, 8), 'practice')],
+      [3, quiz('type', T(8), 'intro')],
     ] },
-    { title: ['unit_7'], levels: [
-      quiz('choice', T(7), 'intro'),
-      quiz('type', T(7), 'intro'),
-      quiz('pickQuestion', T(6, 7, 8), 'practice'),
-      quiz('missing', T(6, 7, 8), 'practice'),
+    { key: 'seven', title: ['unit_7'], levels: [
+      [1, quiz('choice', T(7), 'intro')],
+      [2, quiz('type', T(7), 'intro')],
+      [3, quiz('pickQuestion', T(6, 7, 8), 'practice')],
+      [4, quiz('missing', T(6, 7, 8), 'practice')],
     ] },
-    { title: ['unit_tricky'], levels: [
-      match(TRICKY, 'practice'),
-      quiz('choice', TRICKY, 'review', { timeLimit: 5 }),
-      quiz('type', TRICKY, 'review', { timeLimit: 5 }),
-      balloons(TRICKY, 6, [8, 16, 24]),
+    // 6–9 × 6–9: first each half with plenty of time, then all 16 facts, faster and faster
+    { key: 'tricky', title: ['unit_tricky'], levels: [
+      [5, quiz('choice', TRICKY_67, 'intro')],
+      [6, quiz('trueFalse', TRICKY_89, 'intro', { count: 12 })],
+      [1, match(TRICKY, 'practice')],
+      [7, quiz('type', TRICKY_67, 'practice')],
+      [8, quiz('type', TRICKY_89, 'practice')],
+      [2, quiz('choice', TRICKY, 'review', { timeLimit: 5 })],
+      [3, quiz('type', TRICKY, 'review', { timeLimit: 5 })],
+      [4, balloons(TRICKY, 6, [8, 16, 24])],
     ] },
-    { title: ['unit_mastery', upTo], levels: [
-      quiz('trueFalse', ALL, 'master', { timeLimit: 3 }),
-      quiz('choice', ALL, 'master', { timeLimit: 4 }),
-      quiz('missing', ALL, 'master', { timeLimit: 6 }),
-      match(ALL, 'master', 4),
-      balloons(ALL, 5, [10, 18, 26]),
-      quiz('type', ALL, 'master'),
-      streak(ALL, 20, 4, [80, 50, 30]),
+    // all facts; every level a little harder than the one before, up to the final test
+    { key: 'master', title: ['unit_mastery', upTo], levels: [
+      [9, quiz('trueFalse', ALL, 'review', { timeLimit: 5 })],
+      [10, quiz('choice', ALL, 'review', { timeLimit: 6 })],
+      [1, quiz('trueFalse', ALL, 'master', { timeLimit: 3 })],
+      [11, quiz('pickQuestion', ALL, 'master', { timeLimit: 6 })],
+      [2, quiz('choice', ALL, 'master', { timeLimit: 4 })],
+      [12, match(ALL, 'practice', 3)],
+      [3, quiz('missing', ALL, 'master', { timeLimit: 6 })],
+      [13, quiz('type', ALL, 'review', { count: 20, timeLimit: 6 })],
+      [14, balloons(ALL, 6, [8, 15, 22])],
+      [15, streak(ALL, 10, 6, [60, 35, 20])],
+      [4, match(ALL, 'master', 4)],
+      [5, balloons(ALL, 5, [10, 18, 26])],
+      [6, quiz('type', ALL, 'master')],
+      [16, quiz('missing', ALL, 'master', { count: 25, timeLimit: 4 })],
+      [7, streak(ALL, 20, 4, [80, 50, 30])],
       // 11 and 12 bring bigger products with three digits, so gold gets a little more time
-      quiz('type', ALL, 'final', with1112 ? { medals: [{ minAccuracy: 0.9, maxAvg: 3 }, { minAccuracy: 1, maxAvg: 2 }, { minAccuracy: 1, maxAvg: 1.2 }] } : {}),
+      [8, quiz('type', ALL, 'final', with1112 ? { medals: [{ minAccuracy: 0.9, maxAvg: 3 }, { minAccuracy: 1, maxAvg: 2 }, { minAccuracy: 1, maxAvg: 1.2 }] } : {})],
     ] },
   ].filter(Boolean);
 
-  UNITS = units;
-  LEVELS = units.flatMap((unit, unitIndex) => unit.levels.map(level => ({ ...level, unitIndex })));
-  LEVELS.forEach((level, index) => {
-    level.number = index + 1;
-    // the two courses keep separate medals; the 1–10 ids match the ids used before the setting existed
-    level.id = `${with1112 ? '12:' : ''}${level.game}-${index + 1}`;
-  });
+  return units.map(unit => ({
+    ...unit,
+    levels: unit.levels.map(([n, level]) => ({ ...level, n, id: `${with1112 ? '12:' : ''}${unit.key}-${n}` })),
+  }));
+}
+
+function buildCourse(with1112) {
+  UNITS = createCourse(with1112);
+  LEVELS = UNITS.flatMap((unit, unitIndex) => unit.levels.map(level => ({ ...level, unitIndex })));
+  LEVELS.forEach((level, index) => { level.number = index + 1; });
+}
+
+// --- medals saved before level ids were permanent ---
+
+// Until then a level's id was `<game>-<position in the course>`, so adding levels moved the medals of every later
+// level. The units below had this many levels then; the others were as they are now.
+const LEGACY_UNIT_SIZES = { tricky: 4, master: 8 };
+const LEGACY_GAMES = ['choice', 'trueFalse', 'type', 'match', 'balloons', 'missing', 'pickQuestion'];
+
+function legacyIdMap() {
+  const map = {};
+  for (const with1112 of [false, true]) {
+    const oldOrder = createCourse(with1112).flatMap(unit => unit.levels
+      .filter(level => level.n <= (LEGACY_UNIT_SIZES[unit.key] ?? Infinity))
+      .sort((a, b) => a.n - b.n));
+    oldOrder.forEach((level, index) => { map[`${with1112 ? '12:' : ''}${level.game}-${index + 1}`] = level.id; });
+  }
+  return map;
+}
+
+const isLegacyId = id => LEGACY_GAMES.includes(/^(?:12:)?([A-Za-z]+)-\d+$/.exec(id)?.[1]);
+
+// level id -> { medal }, with old ids moved to the permanent ones (the better medal wins if both exist)
+function migrateProgress(progress) {
+  if (!Object.keys(progress).some(isLegacyId)) return progress;
+  const map = legacyIdMap();
+  const migrated = {};
+  for (const [id, entry] of Object.entries(progress)) {
+    const newId = isLegacyId(id) ? map[id] : id;
+    if (newId && (migrated[newId]?.medal ?? 0) < entry.medal) migrated[newId] = entry;
+  }
+  return migrated;
 }
 
 function meetsGoal(goal, result) {

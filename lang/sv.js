@@ -79,6 +79,7 @@ STRINGS.sv = {
   factsTables: tables => tables.length === 1 ? `${tables[0]}:ans tabell` : `Tabellerna ${formatTables(tables)}`,
   factsSquares: max => `Kvadrattal, 1 · 1 till ${max} · ${max}`,
   factsTricky: '6, 7, 8 och 9 gånger 6, 7, 8 och 9',
+  factsTrickyPart: tables => `${tables.join(' och ')} gånger 6, 7, 8 och 9`,
   timeLimit: s => `${s} per uppgift`,
   questions: n => `${n} uppgifter`,
   rounds: (rounds, pairs) => `${rounds} omgångar med ${pairs} par`,
